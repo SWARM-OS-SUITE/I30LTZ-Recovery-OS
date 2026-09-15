@@ -39,11 +39,12 @@ _Last updated: 2026-09-14 17:12_
 
 | Script | Last Updated | Notes |
 |---|---|---|
-| `build_swarm_iso_6.2.19_2026-09-08.sh` | 2026-09-13 | Builds all components + ISO |
+| `build_swarm_iso_6.2.19_2026-09-08.sh` | 2026-09-15 | Builds all components + ISO; Step 8 syncs to Ventoy, keeps 2 local / 10 Ventoy |
+| `snapshot_before_update.sh` | 2026-09-15 | **Run before deploying any change** — Btrfs snapshot + GRUB rollback entry |
 | `sync_lucille_ai.sh` | 2026-09-12 | rsync --checksum, Lucille-AI + I30LTZ-Recovery |
 | `update_build_tracker.sh` | 2026-09-12 | Regenerates this file |
 | `unlock_slick.sh` | 2026-09-12 | Opens LUKS slick partition |
-| `install_swarm_os.sh` | 2026-09-13 | Live USB → NVMe installer |
+| `install_swarm_os.sh` | 2026-09-15 | Live USB → NVMe installer; enables swarm-snapshot.service |
 
 ---
 
@@ -103,6 +104,31 @@ Every UI surface displays its version + build date. Do not omit these.
 | SWARM OS lock screen | bottom of screen | version from Flutter `pubspec.yaml` |
 | Lucille Panel (slint) | status bar | `SWARM_VERSION` baked at compile time |
 | LucyServer `/api/version` | REST endpoint | returns build version + date |
+
+---
+
+## Before Deploying a New Binary
+
+Always snapshot the installed SWARM OS root before pushing a new I30LTZ Recovery build:
+
+```bash
+# Desktop shortcut — double-click:
+# /home/i30ltz/Desktop/swarm-snapshot.desktop
+# (Right-click → Allow Launching on first use)
+
+# Or terminal:
+sudo /mnt/Lucy/70-scripts/snapshot_before_update.sh pre-i30ltz-recovery
+
+# Then copy the new binary to the installed system:
+sudo cp /mnt/Lucy/30-source/i30ltz-recovery(seperate-related-project)/target/release/i30ltz-recovery \
+     /mnt/swarm/@/opt/swarm_os/i30ltz-recovery
+```
+
+Rollback: reboot → GRUB → pick `"SWARM OS — Snapshot …"` entry.
+
+> **Keep desktop script current:** the `.desktop` file calls `snapshot_before_update.sh`
+> by absolute path. If the script moves, update the `Exec=` line in
+> `/home/i30ltz/Desktop/swarm-snapshot.desktop`.
 
 ---
 
