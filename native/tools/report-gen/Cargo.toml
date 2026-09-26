@@ -1,0 +1,12 @@
+[package]
+name = "reportgen"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "reportgen"
+path = "src/main.rs"
+
+[dependencies]
+i30ltz-core.workspace = true

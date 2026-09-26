@@ -38,3 +38,10 @@ when the rest of the scaffold is available.
 See `batch-02/README.md`: the workspace-root manifest and version.rs have now
 been recovered there. Logger, member manifests and application/library/tool
 directories remain missing. The first batch above is retained unchanged.
+
+## Reconstruction update
+
+The user confirmed these are all available references. Missing workspace files
+are now reconstructed under the repository's `native/` directory. This import
+remains the historical original; the native README distinguishes implemented
+core plumbing from application entry points whose features are still pending.

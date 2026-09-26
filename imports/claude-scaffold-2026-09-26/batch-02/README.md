@@ -43,3 +43,10 @@ TOML documents parse, and all ten XML documents are well-formed. A basic scan
 found no common credential patterns; it is not an exhaustive security audit.
 No installer or launcher was executed. No native/Android build or Debian boot
 is claimed. HTML runtime behavior has not been verified.
+
+## Reconstruction update
+
+The user confirmed these are all available references. Missing workspace files
+are now reconstructed under the repository's `native/` directory. This import
+remains the historical original; the native README distinguishes implemented
+core plumbing from application entry points whose features are still pending.
