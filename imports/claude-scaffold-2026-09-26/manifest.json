@@ -1,0 +1,51 @@
+{
+  "source": "User-provided Claude chat downloads",
+  "date": "2026-09-26",
+  "files": [
+    {
+      "file": "files/Makefile",
+      "sha256": "bc0ddac3069a2847f2b3d27b5442177f7effee7f293f5bb4e94348df869c602c",
+      "bytes": 5474
+    },
+    {
+      "file": "files/models.rs",
+      "sha256": "3a3ee173dfe568931cd5d66ba4e59cf6422d37a3cb93595059d2d0bd268bdb78",
+      "bytes": 2524
+    },
+    {
+      "file": "files/config.rs",
+      "sha256": "a3a0e9d06e6426cf4f895a91060e0b414364b6c962c4ba51e2e5a4eead53d0b5",
+      "bytes": 2361
+    },
+    {
+      "file": "files/i30ltz.toml",
+      "sha256": "73b393ed3049ac21cb04622c8c34ece2feea7ba946043a939340bb84116c1b12",
+      "bytes": 425
+    },
+    {
+      "file": "files/db.rs",
+      "sha256": "287538a4357504d5cf6f867b7cd01c5bdee9b101cd1813acbdb4c2ce4f938c89",
+      "bytes": 1722
+    },
+    {
+      "file": "files/error.rs",
+      "sha256": "ec1e7f6af7b666bc0a0953d6503383cec17c59c058d89a582434a2735c0def04",
+      "bytes": 641
+    },
+    {
+      "file": "files/i30ltz-launch.sh",
+      "sha256": "40bab13ba3d8b69d894da3918091ff9c989bb507b751f11c139d433fb3eb4c8d",
+      "bytes": 460
+    },
+    {
+      "file": "files/install-build-deps.sh",
+      "sha256": "c02eab0891bf640dd42cb324c4c2e28a881bb703a9c68e139c38ea4d65e829a5",
+      "bytes": 2206
+    },
+    {
+      "file": "files/lib.rs",
+      "sha256": "25612e907a5902f076e3c0029ddef15ffdd8f73555b9a7a808b3aee203fea906",
+      "bytes": 314
+    }
+  ]
+}
