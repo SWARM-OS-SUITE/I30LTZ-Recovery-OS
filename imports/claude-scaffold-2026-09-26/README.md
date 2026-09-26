@@ -32,3 +32,9 @@ serve as the manifest for this scaffold without deliberate integration work.
 
 Original contents remain unchanged so corrections can be reviewed separately
 when the rest of the scaffold is available.
+
+## Second batch update
+
+See `batch-02/README.md`: the workspace-root manifest and version.rs have now
+been recovered there. Logger, member manifests and application/library/tool
+directories remain missing. The first batch above is retained unchanged.

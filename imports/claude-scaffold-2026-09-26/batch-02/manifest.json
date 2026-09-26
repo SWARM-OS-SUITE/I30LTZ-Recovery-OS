@@ -1,0 +1,203 @@
+{
+  "source": "User-provided downloaded files, second batch",
+  "files": [
+    {
+      "file": "files/AndroidManifest.xml",
+      "sha256": "cbeafdda007a25043214e4d8961b8c7bca0f6f5223196b2d811c8e70b7fb5d28",
+      "bytes": 2018,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/backup_rules.xml",
+      "sha256": "173c90cbeb773e6a65b430581a85720dc5c7ddba17d543cfefe3d2aed9b9a7a4",
+      "bytes": 479,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/Cargo-1.toml",
+      "sha256": "9ffce935782c2b3c4f153f9785e7684770f042c4f5ccb3074dc8e7043b395fd4",
+      "bytes": 2730,
+      "group": "native-rust"
+    },
+    {
+      "file": "files/colors.xml",
+      "sha256": "57681038afd005dcd260eabdd6d16619709c4a3fe20324362ea00e093e85b5fd",
+      "bytes": 379,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/data_extraction_rules.xml",
+      "sha256": "30ae995624fd57d839bf0d638900f8d2c17c703d6e7d6c8640708a8a7cac2402",
+      "bytes": 552,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/db.rs",
+      "sha256": "287538a4357504d5cf6f867b7cd01c5bdee9b101cd1813acbdb4c2ce4f938c89",
+      "bytes": 1722,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/editor.html",
+      "sha256": "e1c2d6b867c028646687f99d4bd76469c756bffaca2067d0020f2907fd7cbc1d",
+      "bytes": 5061,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/error.rs",
+      "sha256": "ec1e7f6af7b666bc0a0953d6503383cec17c59c058d89a582434a2735c0def04",
+      "bytes": 641,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/home.html",
+      "sha256": "da8f1daf129df7772e7abf390719a32ff7be391aec4d9364c4683ea676712f8c",
+      "bytes": 48272,
+      "group": "debian-web-ui"
+    },
+    {
+      "file": "files/i30ltz.toml",
+      "sha256": "73b393ed3049ac21cb04622c8c34ece2feea7ba946043a939340bb84116c1b12",
+      "bytes": 425,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/i30ltz-launch.sh",
+      "sha256": "40bab13ba3d8b69d894da3918091ff9c989bb507b751f11c139d433fb3eb4c8d",
+      "bytes": 460,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/i30ltz-setup.sh",
+      "sha256": "d52c842372c8e5550c81225395aaf9b402fafe7b63fc39344a4a4c564701dc3f",
+      "bytes": 9315,
+      "group": "debian-web-ui"
+    },
+    {
+      "file": "files/ic_launcher.xml",
+      "sha256": "6d0988175971f41bdc83eadb144af3d84c40052fa125e90edbe7d89227be4b25",
+      "bytes": 344,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/ic_launcher_background.xml",
+      "sha256": "d5eb9304c2eca1702a493cbe5ffa6f096754c97d4533ba798a61a4f819aadf9b",
+      "bytes": 1577,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/ic_launcher_round.xml",
+      "sha256": "6d0988175971f41bdc83eadb144af3d84c40052fa125e90edbe7d89227be4b25",
+      "bytes": 344,
+      "group": "android-companion",
+      "identical_to_batch_file": "ic_launcher.xml"
+    },
+    {
+      "file": "files/install-build-deps.sh",
+      "sha256": "c02eab0891bf640dd42cb324c4c2e28a881bb703a9c68e139c38ea4d65e829a5",
+      "bytes": 2206,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/install-build-deps (1).sh",
+      "sha256": "c02eab0891bf640dd42cb324c4c2e28a881bb703a9c68e139c38ea4d65e829a5",
+      "bytes": 2206,
+      "group": "native-rust",
+      "identical_to_batch_file": "install-build-deps.sh"
+    },
+    {
+      "file": "files/ic_launcher_foreground.xml",
+      "sha256": "6bf0655b07084ad9b5cd7aefbe70324c052d3618ed50bb3a2146986db3619496",
+      "bytes": 4077,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/install-build-deps-1.sh",
+      "sha256": "c02eab0891bf640dd42cb324c4c2e28a881bb703a9c68e139c38ea4d65e829a5",
+      "bytes": 2206,
+      "group": "native-rust",
+      "identical_to_batch_file": "install-build-deps (1).sh"
+    },
+    {
+      "file": "files/lib.rs",
+      "sha256": "25612e907a5902f076e3c0029ddef15ffdd8f73555b9a7a808b3aee203fea906",
+      "bytes": 314,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/models.rs",
+      "sha256": "3a3ee173dfe568931cd5d66ba4e59cf6422d37a3cb93595059d2d0bd268bdb78",
+      "bytes": 2524,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/Makefile",
+      "sha256": "bc0ddac3069a2847f2b3d27b5442177f7effee7f293f5bb4e94348df869c602c",
+      "bytes": 5474,
+      "group": "native-rust",
+      "identical_to_first_batch": true
+    },
+    {
+      "file": "files/README-1.md",
+      "sha256": "41cc2621dea5a2543e9357a594b6b059d9e498974635a094e04853cf73b4db4f",
+      "bytes": 1321,
+      "group": "native-rust"
+    },
+    {
+      "file": "files/README.md",
+      "sha256": "ca9b75a505d9edaaeb69323132d59057905b4a194055b2d3b6fc1a4308dc7ba5",
+      "bytes": 2900,
+      "group": "debian-web-ui"
+    },
+    {
+      "file": "files/version.rs",
+      "sha256": "247da0edf183e1a5024f2eb82f927db881d5c20f984d4e01f7deba4923548534",
+      "bytes": 513,
+      "group": "native-rust"
+    },
+    {
+      "file": "files/strings.xml",
+      "sha256": "7b61aff2d56951ee7a1e8594826335db00b01c1e06f963f42b8a84cd8268f19c",
+      "bytes": 81,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/themes.xml",
+      "sha256": "e8288b65767f4f28854d168c7b19c308579d3703bdf3fc26c2b266e19148f465",
+      "bytes": 155,
+      "group": "android-companion"
+    },
+    {
+      "file": "files/splash-screen-v1.0.0.html",
+      "sha256": "541430ad123ee6e574dab0b20e3fd1acf27719df7c0535f153084dc8e8b39d47",
+      "bytes": 32486,
+      "group": "debian-web-ui"
+    }
+  ],
+  "checks": [
+    "AndroidManifest.xml: XML well-formed",
+    "backup_rules.xml: XML well-formed",
+    "Cargo-1.toml: TOML parses",
+    "colors.xml: XML well-formed",
+    "data_extraction_rules.xml: XML well-formed",
+    "i30ltz.toml: TOML parses",
+    "i30ltz-launch.sh: shell syntax passed",
+    "i30ltz-setup.sh: shell syntax passed",
+    "ic_launcher.xml: XML well-formed",
+    "ic_launcher_background.xml: XML well-formed",
+    "ic_launcher_round.xml: XML well-formed",
+    "install-build-deps.sh: shell syntax passed",
+    "install-build-deps (1).sh: shell syntax passed",
+    "ic_launcher_foreground.xml: XML well-formed",
+    "install-build-deps-1.sh: shell syntax passed",
+    "strings.xml: XML well-formed",
+    "themes.xml: XML well-formed"
+  ]
+}
