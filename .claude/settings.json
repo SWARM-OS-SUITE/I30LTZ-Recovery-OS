@@ -45,6 +45,17 @@
           }
         ]
       }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/cloud_checkpoint.py\"",
+            "timeout": 90
+          }
+        ]
+      }
     ]
   }
 }

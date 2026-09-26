@@ -2,7 +2,8 @@
 
 This repository has command hooks in `.claude/settings.json`. In a single-repository
 Claude cloud session, they save eligible changes after Write/Edit/Bash tools and
-retry pushes at session start/resume, Stop, and PreCompact. They use Git, not model
+retry pushes at session start/resume, Stop, StopFailure (including rate-limit
+errors), and PreCompact. They use Git, not model
 API calls. Keep the session on its assigned `claude/*` branch; never force-push or
 switch to main to work around a failed checkpoint. Existing staged changes and
 Git operations are left alone. A checkpoint is a backup, not proof of passing tests.
