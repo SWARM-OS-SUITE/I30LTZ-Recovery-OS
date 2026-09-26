@@ -1,0 +1,18 @@
+
+# Cloud checkpoints: local state, generated output, and credentials
+.claude/.cc-writes/
+.claude/settings.local.json
+.env
+.env.*
+secrets/
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+credentials*.json
+client_secret*.json
+service-account*.json
+target/
+build/
+__pycache__/
