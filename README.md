@@ -4,9 +4,9 @@
   Run `make -C native dev`, `make -C native test`, and `make -C native smoke`.
 - **Existing evaluation application:** root `Cargo.toml`, `build.rs`, and `src/`.
   Kept intact while the native workspace is developed.
-- **Ubuntu first boot (secure setup, v1.0.0 · 2026-09-30):**
-  [`system/ubuntu-first-boot/`](system/ubuntu-first-boot/README.md). Sets up
-  SWARM_OS / LLcy and I30LTZ / MAD IT. Preview with `sudo ./first-boot.sh --dry-run`.
+- **First-boot kits (secure setup, v2.0.0 · 2026-09-30):** [`system/`](system/README.md).
+  There's one kit per machine: I30LTZ Recovery OS, or the dev workstation that
+  builds both OSes. SWARM_OS is a separate OS, and its kit lives in the SWARM_OS repo.
 - **Original Claude downloads:** [`imports/claude-scaffold-2026-09-26/`](imports/claude-scaffold-2026-09-26/).
   Saved unchanged with hashes. They include distinct native, web UI and Android
   references; the reconstructed native workspace is the active scaffold path.

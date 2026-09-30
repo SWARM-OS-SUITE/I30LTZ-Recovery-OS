@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # about: checks Ubuntu version, disk, network, Secure Boot, disk encryption
-# SWARM_OS Suite · Ubuntu First Boot v1.0.0 · 2026-09-30
+# Ubuntu first-boot shared module v2.0.0 · 2026-09-30
 
 [[ -r /etc/os-release ]] || die "no /etc/os-release — is this Ubuntu?"
 # shellcheck source=/dev/null
@@ -12,7 +12,7 @@ case "${VERSION_ID:-}" in
 esac
 
 free_gb=$(df -BG --output=avail / | tail -1 | tr -dc '0-9')
-((free_gb >= 15)) && ok "free space on /: ${free_gb}G" || warn "only ${free_gb}G free on / — gaming + recovery tools want 15G+"
+((free_gb >= 15)) && ok "free space on /: ${free_gb}G" || warn "only ${free_gb}G free on / — this kit wants 15G+"
 
 if getent ahosts archive.ubuntu.com >/dev/null 2>&1; then ok "network: package mirror reachable"
 else die "no network — plug in ethernet or join Wi-Fi, then re-run"; fi

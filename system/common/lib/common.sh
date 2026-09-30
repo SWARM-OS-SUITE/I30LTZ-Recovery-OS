@@ -1,18 +1,15 @@
 # shellcheck shell=bash disable=SC2034
 # =============================================================================
-# SWARM_OS Suite — Ubuntu First Boot · shared helpers
-# Version: 1.0.0 | Date: 2026-09-30
-# Sourced by first-boot.sh and every module. Never run directly.
+# Ubuntu first boot · shared helpers
+# Version: 2.0.0 | Date: 2026-09-30
+# Sourced by common/runner.sh and every module. Never run directly.
 # =============================================================================
-
-KIT_VERSION="1.0.0"
-KIT_DATE="2026-09-30"
 
 C_RED=$'\033[0;31m'; C_CYAN=$'\033[0;36m'; C_AMBER=$'\033[0;33m'
 C_GREEN=$'\033[0;32m'; C_MAG=$'\033[0;35m'; C_BOLD=$'\033[1m'; C_NC=$'\033[0m'
 
-LOG_DIR="${LOG_DIR:-/var/log/swarm-first-boot}"
-BACKUP_DIR="${BACKUP_DIR:-/var/backups/swarm-first-boot}"
+LOG_DIR="${LOG_DIR:-/var/log/first-boot}"
+BACKUP_DIR="${BACKUP_DIR:-/var/backups/first-boot}"
 DRY_RUN="${DRY_RUN:-0}"
 
 _stamp() { date '+%Y-%m-%d %H:%M:%S'; }
@@ -69,7 +66,9 @@ backup_file() {
   local f="$1"
   [[ -e "$f" ]] || return 0
   run mkdir -p "$BACKUP_DIR"
-  run cp -a "$f" "$BACKUP_DIR/$(basename "$f").$(date +%Y%m%d-%H%M%S).bak"
+  # full path in the name, so /etc/a/release and /etc/b/release never collide
+  local name="${f#/}"; name="${name//\//__}"
+  run cp -a "$f" "$BACKUP_DIR/${name}.$(date +%Y%m%d-%H%M%S).bak"
 }
 
 # write_file PATH MODE < content — backs up, then writes atomically.
