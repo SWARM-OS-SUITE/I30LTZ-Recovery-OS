@@ -68,7 +68,7 @@ ways, used in this order:
   never automatically while repairing.
 
 ### B. Your real Lucille data from the internal drive (read-only)
-- Recovery OS can unlock (LUCKS) and mount the SWARM_OS partition
+- Recovery OS can unlock (LUKS) and mount the SWARM_OS partition
   **read-only**, then point portable Lucille at your real memory and notes
   there. Lucille then knows your context, not just the snapshot.
 - Anything Lucille writes during a recovery session goes to the

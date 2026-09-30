@@ -14,7 +14,7 @@ fi
 
 # ── Build + boot-test both OS images without touching this machine ─────────
 #   SWARM_OS is Arch-based (archiso): arch-install-scripts gives pacstrap.
-#   I30LTZ Recovery OS is Debian-based: debootstrap + live-build.
+#   I30LTZ Recovery OS is Ubuntu-based: debootstrap + live-build.
 #   QEMU + OVMF boot either ISO in a window (UEFI + Secure Boot capable).
 apt_install qemu-system-x86 qemu-utils ovmf xorriso squashfs-tools mtools
 apt_optional arch-install-scripts debootstrap live-build virt-manager
@@ -38,7 +38,7 @@ run chmod 0755 /etc/suite-dev
 write_file /etc/suite-dev/release 0644 <<'CFG'
 # SWARM_OS Suite — dev workstation identity (this machine is neither OS)
 ROLE="dev-workstation"
-BUILDS="SWARM_OS (Arch), I30LTZ Recovery OS (Debian)"
+BUILDS="SWARM_OS (Arch, internal), I30LTZ Recovery OS (Ubuntu, external)"
 FIRST_BOOT_KIT="2.0.0"
 FIRST_BOOT_DATE="2026-09-30"
 CFG

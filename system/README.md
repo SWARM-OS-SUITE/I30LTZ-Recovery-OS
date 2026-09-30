@@ -2,14 +2,15 @@
 
 **v2.0.0 · 2026-09-30**
 
-SWARM_OS and I30LTZ Recovery OS are **two separate operating systems**, so
+SWARM_OS (Arch, internal) and I30LTZ Recovery OS (Ubuntu, external) are **two
+separate operating systems** (see [`docs/SUITE_ARCHITECTURE.md`](../docs/SUITE_ARCHITECTURE.md)), so
 each machine gets its own kit. Never run two kits on the same machine.
 
 | Machine | Kit | Assistant |
 |---|---|---|
-| A PC that **is** I30LTZ Recovery OS (Ubuntu/Debian base) | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) | Dr. I30LTZ "MAD IT" |
+| The **external** drive that **is** I30LTZ Recovery OS (Ubuntu base) | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) | Dr. I30LTZ "MAD IT" |
 | Your **dev workstation**, the Ubuntu laptop that builds both OSes | [`dev-workstation-first-boot/`](dev-workstation-first-boot/README.md) | none (it's neither OS) |
-| A PC that **is** SWARM_OS (Arch/archiso) | not in this repo: it belongs in the SWARM_OS / Lucille repo | LUCILLE CORE AI "LLcy" |
+| The **internal** drive that **is** SWARM_OS (Arch/archiso) | not in this repo: it belongs in the SWARM_OS / Lucille repo | LUCILLE CORE AI "LLcy" |
 
 ```
 system/

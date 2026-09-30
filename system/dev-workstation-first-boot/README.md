@@ -4,8 +4,8 @@
 
 This kit is for the laptop you use to **build both operating systems**:
 
-- **SWARM_OS**, the Arch/archiso OS with LUCILLE CORE AI "LLcy"
-- **I30LTZ Recovery OS**, the Debian-based OS with Dr. I30LTZ "MAD IT"
+- **SWARM_OS**, the Arch/archiso OS on the internal drive, with LUCILLE CORE AI "LLcy"
+- **I30LTZ Recovery OS**, the Ubuntu-based OS on an external drive, with Dr. I30LTZ "MAD IT"
 
 This machine is **neither** OS. It never writes `/etc/swarm_os/release` or
 `/etc/i30ltz/release`. Its role file is `/etc/suite-dev/release`.
