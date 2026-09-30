@@ -2,8 +2,11 @@
 
 **v2.0.0 · 2026-09-30** · Ubuntu 24.04 / 26.04 LTS base · **external drive** · assistant: **Dr. I30LTZ "MAD IT"** + access to Lucille
 
-Use this only on the PC that **is** I30LTZ Recovery OS. Don't use it on your
-dev workstation, and don't use it on SWARM_OS.
+Install Ubuntu LTS onto the **external** drive (USB / portable SSD), boot from
+it, then run this kit there. Don't use it on your dev workstation, and don't
+use it on SWARM_OS's internal drive. See
+[`docs/SUITE_ARCHITECTURE.md`](../../docs/SUITE_ARCHITECTURE.md) for how
+Lucille is reached from here.
 
 ## Run it
 

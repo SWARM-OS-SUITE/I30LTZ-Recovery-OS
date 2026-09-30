@@ -1,5 +1,9 @@
 # I30LTZ Recovery OS
 
+> **Suite map:** SWARM_OS + LUCILLE (LLcy) = **Arch**, on the **internal** drive.
+> I30LTZ Recovery OS + Dr. I30LTZ "MAD IT" = **Ubuntu**, on an **external** drive,
+> and it can reach Lucille. Full details: [`docs/SUITE_ARCHITECTURE.md`](docs/SUITE_ARCHITECTURE.md).
+
 - **Reconstructed Debian-targeted Rust foundation:** [`native/README.md`](native/README.md).
   Run `make -C native dev`, `make -C native test`, and `make -C native smoke`.
 - **Existing evaluation application:** root `Cargo.toml`, `build.rs`, and `src/`.
