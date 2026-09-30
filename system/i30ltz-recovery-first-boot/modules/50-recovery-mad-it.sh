@@ -1,8 +1,7 @@
 # shellcheck shell=bash
 # about: I30LTZ Recovery · Dr. I30LTZ "MAD IT" — repair + data-recovery toolkit
-# SWARM_OS Suite · Ubuntu First Boot v1.0.0 · 2026-09-30
-
-if ! wants recovery; then info "profile=$PROFILE — Recovery part skipped"; return 0; fi
+# I30LTZ Recovery OS first boot v2.0.0 · 2026-09-30
+# Also reused by the dev-workstation kit as a test bench (WRITE_OS_IDENTITY=0).
 
 # ── Disk health + imaging + carving ────────────────────────────────────────
 apt_install smartmontools nvme-cli hdparm gddrescue testdisk \
@@ -18,7 +17,7 @@ run systemctl enable --now smartmontools 2>/dev/null || run systemctl enable --n
 
 # ── MAD IT home: /opt/i30ltz + private case store ──────────────────────────
 getent group i30ltz >/dev/null || run groupadd --system i30ltz
-run usermod -aG i30ltz "$TARGET_USER"
+[[ -n "$TARGET_USER" ]] && run usermod -aG i30ltz "$TARGET_USER"
 run install -d -o root -g i30ltz -m 0755 /opt/i30ltz /opt/i30ltz/bin /opt/i30ltz/models /etc/i30ltz
 # Cases hold other people's data: group-only, never world-readable
 run install -d -o root -g i30ltz -m 2770 /var/lib/i30ltz /var/lib/i30ltz/cases /var/log/i30ltz
@@ -48,11 +47,14 @@ esac
 SH
 run ln -sf /opt/i30ltz/bin/i30ltz-writeblock /usr/local/bin/i30ltz-writeblock
 
-write_file /etc/i30ltz/release 0644 <<'CFG'
-# I30LTZ Recovery — machine identity
-PROGRAM="I30LTZ Recovery"
+# Machine identity — only on a real I30LTZ Recovery OS install
+if [[ "${WRITE_OS_IDENTITY:-1}" == 1 ]]; then
+  write_file /etc/i30ltz/release 0644 <<'CFG'
+# I30LTZ Recovery OS — machine identity
+OS="I30LTZ Recovery OS"
 ASSISTANT="Dr. I30LTZ (MAD IT)"
-FIRST_BOOT_KIT="1.0.0"
+FIRST_BOOT_KIT="2.0.0"
 FIRST_BOOT_DATE="2026-09-30"
 CFG
+fi
 ok "MAD IT toolkit ready: /opt/i30ltz, cases in /var/lib/i30ltz/cases (group: i30ltz)"

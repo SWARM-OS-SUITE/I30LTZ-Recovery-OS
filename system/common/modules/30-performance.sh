@@ -1,6 +1,6 @@
 # shellcheck shell=bash
-# about: integrated-graphics drivers, Vulkan, video decode, zram, game-ready tuning
-# SWARM_OS Suite · Ubuntu First Boot v1.0.0 · 2026-09-30
+# about: integrated-graphics drivers, Vulkan, video decode, zram (+ gaming tuning on the workstation)
+# Ubuntu first-boot shared module v2.0.0 · 2026-09-30
 
 # ── Graphics stack (Mesa = best open driver for Intel/AMD iGPUs) ───────────
 apt_install mesa-utils mesa-vulkan-drivers vulkan-tools libgl1-mesa-dri
@@ -10,7 +10,7 @@ case "${GPU_VENDOR:-unknown}" in
   *)     apt_optional mesa-va-drivers vainfo ;;
 esac
 # 32-bit Vulkan/GL so Steam + Proton games run
-if wants swarm; then
+if [[ "${FEATURE_GAMING:-0}" == 1 ]]; then
   if ! dpkg --print-foreign-architectures | grep -q i386; then
     run dpkg --add-architecture i386
     run apt-get update
@@ -26,7 +26,7 @@ run systemctl enable --now thermald 2>/dev/null || true
 # ── zram: compressed RAM swap — big win on iGPU laptops sharing memory ─────
 apt_optional systemd-zram-generator
 write_file /etc/systemd/zram-generator.conf 0644 <<'CFG'
-# SWARM_OS first boot v1.0.0 · 2026-09-30
+# first-boot kit v2.0.0 · 2026-09-30
 [zram0]
 zram-size = min(ram / 2, 8192)
 compression-algorithm = zstd
@@ -41,10 +41,15 @@ else
   warn "zram generator unavailable — using default swap behaviour"
 fi
 
-write_file /etc/sysctl.d/61-swarm-performance.conf 0644 <<CFG
-# SWARM_OS first boot v1.0.0 · 2026-09-30
-# Many modern games (Proton/DXVK) need a large map count
-vm.max_map_count = 2147483642
+if [[ "${FEATURE_GAMING:-0}" == 1 ]]; then
+  GAMING_TUNING=$'# Many modern games (Proton/DXVK) need a large map count\nvm.max_map_count = 2147483642'
+else
+  GAMING_TUNING='# no gaming tuning on this machine'
+fi
+
+write_file /etc/sysctl.d/61-firstboot-performance.conf 0644 <<CFG
+# first-boot kit v2.0.0 · 2026-09-30
+${GAMING_TUNING}
 # Prefer zram over dropping file cache; keep desktop snappy
 ${ZRAM_TUNING}
 vm.vfs_cache_pressure = 50
@@ -52,8 +57,8 @@ vm.vfs_cache_pressure = 50
 vm.dirty_background_bytes = 67108864
 vm.dirty_bytes = 268435456
 CFG
-run sysctl --system >/dev/null
+run sysctl --system >/dev/null 2>&1 || warn "sysctl reported unknown keys (settings still load at next boot)"
 
 # ── SSD health ─────────────────────────────────────────────────────────────
 run systemctl enable --now fstrim.timer
-ok "performance: zram(zstd), fstrim weekly, game-ready vm tuning"
+ok "performance: zram(zstd), fstrim weekly$([[ ${FEATURE_GAMING:-0} == 1 ]] && echo ", game-ready vm tuning")"

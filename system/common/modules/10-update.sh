@@ -1,11 +1,11 @@
 # shellcheck shell=bash
 # about: full upgrade, automatic security updates, firmware updates
-# SWARM_OS Suite · Ubuntu First Boot v1.0.0 · 2026-09-30
+# Ubuntu first-boot shared module v2.0.0 · 2026-09-30
 
 run apt-get update
 apt_install software-properties-common
 enable_component universe
-wants swarm && enable_component multiverse   # Steam, Intel media codecs
+[[ "${FEATURE_GAMING:-0}" == 1 ]] && enable_component multiverse   # Steam, Intel media codecs
 enable_component restricted
 
 [[ "$APT_DIRTY" == 1 ]] && run apt-get update
@@ -14,15 +14,15 @@ APT_DIRTY=0
 apt_install unattended-upgrades apt-listchanges needrestart fwupd
 
 write_file /etc/apt/apt.conf.d/20auto-upgrades 0644 <<'CFG'
-// SWARM_OS first boot v1.0.0 · 2026-09-30
+// first-boot kit v2.0.0 · 2026-09-30
 APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Download-Upgradeable-Packages "1";
 APT::Periodic::Unattended-Upgrade "1";
 APT::Periodic::AutocleanInterval "7";
 CFG
 
-write_file /etc/apt/apt.conf.d/52swarm-unattended 0644 <<'CFG'
-// SWARM_OS first boot v1.0.0 · 2026-09-30 — security fixes install themselves
+write_file /etc/apt/apt.conf.d/52firstboot-unattended 0644 <<'CFG'
+// first-boot kit v2.0.0 · 2026-09-30 — security fixes install themselves
 Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
 Unattended-Upgrade::Automatic-Reboot "false";

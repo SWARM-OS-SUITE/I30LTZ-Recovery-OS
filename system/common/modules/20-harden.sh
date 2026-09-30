@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # about: firewall, AppArmor, kernel hardening, SSH off-by-default, lock screen
-# SWARM_OS Suite · Ubuntu First Boot v1.0.0 · 2026-09-30
+# Ubuntu first-boot shared module v2.0.0 · 2026-09-30
 
 apt_install ufw apparmor apparmor-utils
 
@@ -16,8 +16,8 @@ run systemctl enable --now apparmor.service
 ok "AppArmor: enabled"
 
 # ── Kernel + network hardening (gaming/coding friendly) ────────────────────
-write_file /etc/sysctl.d/60-swarm-hardening.conf 0644 <<'CFG'
-# SWARM_OS first boot v1.0.0 · 2026-09-30
+write_file /etc/sysctl.d/60-firstboot-hardening.conf 0644 <<'CFG'
+# first-boot kit v2.0.0 · 2026-09-30
 # Hide kernel pointers + logs from normal users
 kernel.kptr_restrict = 2
 kernel.dmesg_restrict = 1
@@ -48,22 +48,22 @@ net.ipv4.tcp_syncookies = 1
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 net.ipv4.conf.all.log_martians = 1
 CFG
-run sysctl --system >/dev/null
+run sysctl --system >/dev/null 2>&1 || warn "sysctl reported unknown keys (settings still load at next boot)"
 
 # ── No core dumps leaking memory to disk ───────────────────────────────────
-write_file /etc/security/limits.d/60-swarm-nocore.conf 0644 <<'CFG'
-# SWARM_OS first boot v1.0.0 · 2026-09-30
+write_file /etc/security/limits.d/60-firstboot-nocore.conf 0644 <<'CFG'
+# first-boot kit v2.0.0 · 2026-09-30
 * hard core 0
 CFG
-write_file /etc/systemd/coredump.conf.d/60-swarm.conf 0644 <<'CFG'
-# SWARM_OS first boot v1.0.0 · 2026-09-30
+write_file /etc/systemd/coredump.conf.d/60-firstboot.conf 0644 <<'CFG'
+# first-boot kit v2.0.0 · 2026-09-30
 [Coredump]
 Storage=none
 ProcessSizeMax=0
 CFG
 
 # ── Home folders private (other accounts can't read yours) ─────────────────
-run chmod 0750 "$TARGET_HOME"
+[[ -n "$TARGET_HOME" ]] && run chmod 0750 "$TARGET_HOME"
 if [[ -f /etc/adduser.conf ]] && ! grep -q '^DIR_MODE=0750' /etc/adduser.conf; then
   backup_file /etc/adduser.conf
   run sed -i 's/^#\?DIR_MODE=.*/DIR_MODE=0750/' /etc/adduser.conf
@@ -71,9 +71,10 @@ fi
 
 # ── Remote login: OFF unless --enable-ssh ──────────────────────────────────
 if [[ "$ENABLE_SSH" == 1 ]]; then
+  [[ -n "$TARGET_USER" ]] || die "--enable-ssh needs --user NAME (the only account allowed to log in)"
   apt_install openssh-server fail2ban
-  write_file /etc/ssh/sshd_config.d/60-swarm-hardening.conf 0644 <<'CFG'
-# SWARM_OS first boot v1.0.0 · 2026-09-30 — keys only, no root
+  write_file /etc/ssh/sshd_config.d/60-firstboot-hardening.conf 0644 <<'CFG'
+# first-boot kit v2.0.0 · 2026-09-30 — keys only, no root
 PermitRootLogin no
 PasswordAuthentication no
 KbdInteractiveAuthentication no
@@ -84,7 +85,7 @@ X11Forwarding no
 AllowAgentForwarding no
 AllowUsers __USER__
 CFG
-  [[ "$DRY_RUN" == 1 ]] || sed -i "s/__USER__/$TARGET_USER/" /etc/ssh/sshd_config.d/60-swarm-hardening.conf
+  [[ "$DRY_RUN" == 1 ]] || sed -i "s/__USER__/$TARGET_USER/" /etc/ssh/sshd_config.d/60-firstboot-hardening.conf
   if [[ ! -s "$TARGET_HOME/.ssh/authorized_keys" ]]; then
     warn "SSH is key-only but $TARGET_HOME/.ssh/authorized_keys is empty — add your key before logging in remotely"
   fi
@@ -101,8 +102,8 @@ fi
 
 # ── Desktop: auto lock + no guest session ──────────────────────────────────
 if [[ -d /etc/dconf ]] || have gnome-shell; then
-  write_file /etc/dconf/db/local.d/60-swarm-security 0644 <<'CFG'
-# SWARM_OS first boot v1.0.0 · 2026-09-30
+  write_file /etc/dconf/db/local.d/60-firstboot-security 0644 <<'CFG'
+# first-boot kit v2.0.0 · 2026-09-30
 [org/gnome/desktop/screensaver]
 lock-enabled=true
 lock-delay=uint32 0
