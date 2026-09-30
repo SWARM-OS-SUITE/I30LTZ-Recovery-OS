@@ -70,7 +70,7 @@ id "$TARGET_USER" >/dev/null 2>&1 || die "user not found: $TARGET_USER"
 TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
 
 export PROFILE ENABLE_SSH DRY_RUN TARGET_USER TARGET_HOME KIT_DIR REPO_DIR
-APT_DIRTY=0
+APT_DIRTY=0  # shellcheck disable=SC2034  # read by modules
 
 wants() {  # wants swarm|recovery
   [[ "$PROFILE" == both || "$PROFILE" == "$1" ]]

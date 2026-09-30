@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+# shellcheck shell=bash disable=SC2034
 # =============================================================================
 # SWARM_OS Suite — Ubuntu First Boot · shared helpers
 # Version: 1.0.0 | Date: 2026-09-30
