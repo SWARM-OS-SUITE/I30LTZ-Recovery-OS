@@ -27,9 +27,9 @@ if [[ -f "$REPO_DIR/native/config/i30ltz.toml" && ! -f /etc/i30ltz/i30ltz.toml ]
   run install -m 0644 "$REPO_DIR/native/config/i30ltz.toml" /etc/i30ltz/i30ltz.toml
 fi
 
-# ── Evidence safety: new USB/SATA disks are NOT auto-mounted read-write ────
-# Recovery rule #1: never write to the patient drive. The helper below flips
-# any disk to kernel-level read-only before you touch it.
+# ── Evidence safety ────────────────────────────────────────────────────────
+# Recovery rule #1: never write to the patient drive. This helper flips a
+# disk and all its partitions to kernel-level read-only before you image it.
 write_file /opt/i30ltz/bin/i30ltz-writeblock 0755 <<'SH'
 #!/usr/bin/env bash
 # Dr. I30LTZ "MAD IT" — software write-blocker v1.0.0 · 2026-09-30
@@ -37,6 +37,7 @@ write_file /opt/i30ltz/bin/i30ltz-writeblock 0755 <<'SH'
 set -euo pipefail
 mode="${1:-status}"; dev="${2:-}"
 [[ -b "$dev" ]] || { echo "usage: sudo $0 on|off|status /dev/sdX"; lsblk -dpno NAME,SIZE,MODEL; exit 1; }
+# shellcheck disable=SC2207
 parts=("$dev" $(lsblk -lnpo NAME "$dev" | tail -n +2))
 case "$mode" in
   on)  for p in "${parts[@]}"; do blockdev --setro "$p"; done; echo "🔒 READ-ONLY: ${parts[*]}" ;;

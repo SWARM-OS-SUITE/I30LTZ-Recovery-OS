@@ -2,14 +2,16 @@
 # about: full upgrade, automatic security updates, firmware updates
 # SWARM_OS Suite · Ubuntu First Boot v1.0.0 · 2026-09-30
 
+run apt-get update
+apt_install software-properties-common
 enable_component universe
 wants swarm && enable_component multiverse   # Steam, Intel media codecs
 enable_component restricted
 
-run apt-get update
+[[ "$APT_DIRTY" == 1 ]] && run apt-get update
 run env DEBIAN_FRONTEND=noninteractive apt-get -y full-upgrade
 APT_DIRTY=0
-apt_install unattended-upgrades apt-listchanges needrestart fwupd software-properties-common
+apt_install unattended-upgrades apt-listchanges needrestart fwupd
 
 write_file /etc/apt/apt.conf.d/20auto-upgrades 0644 <<'CFG'
 // SWARM_OS first boot v1.0.0 · 2026-09-30

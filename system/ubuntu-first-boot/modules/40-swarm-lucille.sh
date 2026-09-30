@@ -15,7 +15,10 @@ if have rustup || [[ "$DRY_RUN" == 1 ]]; then
 fi
 
 # ── Gaming ─────────────────────────────────────────────────────────────────
-apt_optional gamemode mangohud steam-installer
+apt_optional gamemode mangohud
+# Steam asks you to accept Valve's license — that's your call, so it's not
+# auto-accepted here. One command when you're ready:
+pkg_installed steam-installer || warn "Steam not installed — when ready:  sudo apt install steam-installer"
 if getent group gamemode >/dev/null; then run usermod -aG gamemode "$TARGET_USER"; fi
 
 # ── LLcy home: /opt/swarm_os (matches the SWARM OS layout) ─────────────────

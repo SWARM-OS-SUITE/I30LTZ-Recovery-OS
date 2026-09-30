@@ -33,14 +33,21 @@ compression-algorithm = zstd
 swap-priority = 100
 CFG
 
-write_file /etc/sysctl.d/61-swarm-performance.conf 0644 <<'CFG'
+# High swappiness only makes sense when swap is RAM (zram), not the SSD.
+if pkg_installed systemd-zram-generator || [[ "$DRY_RUN" == 1 ]]; then
+  ZRAM_TUNING=$'vm.swappiness = 150\nvm.page-cluster = 0'
+else
+  ZRAM_TUNING='# zram not installed — kernel swap defaults kept'
+  warn "zram generator unavailable — using default swap behaviour"
+fi
+
+write_file /etc/sysctl.d/61-swarm-performance.conf 0644 <<CFG
 # SWARM_OS first boot v1.0.0 · 2026-09-30
 # Many modern games (Proton/DXVK) need a large map count
 vm.max_map_count = 2147483642
 # Prefer zram over dropping file cache; keep desktop snappy
-vm.swappiness = 150
+${ZRAM_TUNING}
 vm.vfs_cache_pressure = 50
-vm.page-cluster = 0
 # Keep writeback smooth (no multi-second stalls when copying big images)
 vm.dirty_background_bytes = 67108864
 vm.dirty_bytes = 268435456
