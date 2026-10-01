@@ -72,7 +72,12 @@ nparts=$(lsblk -lnpo TYPE "$disk" | grep -c part || true)
 if [[ "$pttype" == dos && $nparts -gt 0 ]]; then
   die "$disk uses an MBR partition table with partitions on it. Converting could lose data — back up, then make it GPT."
 fi
-if lsblk -lnpo PARTTYPE "$disk" | grep -qi "$ROOT_TYPE"; then
+part_field() { blkid -p -o value -s "$2" "$1" 2>/dev/null || true; }   # reads the disk, not udev
+has_root=0
+while read -r p; do
+  [[ "$(part_field "$p" PART_ENTRY_TYPE)" == "$ROOT_TYPE" ]] && has_root=1
+done < <(lsblk -lnpo NAME,TYPE "$disk" | awk '$2=="part"{print $1}')
+if [[ $has_root == 1 ]]; then
   die "$disk already has an OS root partition. Remove the old one first so boot stays unambiguous."
 fi
 model=$(lsblk -dno MODEL "$disk" | xargs || true); size_h=$(lsblk -dno SIZE "$disk" | xargs)
@@ -137,7 +142,7 @@ mapfile -t added < <(comm -13 <(echo "$before") <(echo "$after"))
 ((${#added[@]} == 2)) || die "expected 2 new partitions, found ${#added[@]} — stopping before writing data"
 esp_dev=""; root_dev=""
 for p in "${added[@]}"; do
-  case "$(lsblk -dno PARTLABEL "$p")" in I30LTZ-ESP) esp_dev=$p ;; i30ltz-root) root_dev=$p ;; esac
+  case "$(part_field "$p" PART_ENTRY_NAME)" in I30LTZ-ESP) esp_dev=$p ;; i30ltz-root) root_dev=$p ;; esac
 done
 [[ -n "$esp_dev" && -n "$root_dev" ]] || die "could not identify the new partitions — stopping before writing data"
 [[ -b "$esp_dev" && -b "$root_dev" ]] || die "new partitions have no device nodes yet — stopping before writing data (re-plug the drive and retry)"
