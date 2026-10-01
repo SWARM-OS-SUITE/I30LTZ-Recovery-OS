@@ -39,6 +39,9 @@ while (($#)); do
 done
 [[ -n "$dir" && -n "$disk" ]] || { sed -n '5,7p' "$0"; exit 1; }
 [[ $EUID -eq 0 ]] || die "run as root: sudo bash $0 …"
+for c in sgdisk sfdisk partprobe e2fsck resize2fs tune2fs numfmt blkid; do
+  command -v "$c" >/dev/null || die "missing tool '$c' — install with: sudo apt install gdisk fdisk parted e2fsprogs"
+done
 
 # ── 1 · the image ──────────────────────────────────────────────────────────
 esp_img=$(ls "$dir"/*.esp.raw 2>/dev/null | head -1 || true)
