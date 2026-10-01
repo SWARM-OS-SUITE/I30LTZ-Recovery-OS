@@ -1,0 +1,27 @@
+# I30LTZ Recovery OS v0.1.0 · 2026-10-01 — which services run (applied at build)
+# Ours
+enable i30ltz-firstboot.service
+enable i30ltz-kiosk.service
+# Network: NetworkManager only (Wi-Fi via nmtui), no second stack
+enable NetworkManager.service
+enable systemd-resolved.service
+enable systemd-timesyncd.service
+disable systemd-networkd.service
+disable systemd-networkd.socket
+disable systemd-networkd-wait-online.service
+# Security + health
+enable ufw.service
+enable apparmor.service
+enable unattended-upgrades.service
+enable apt-daily.timer
+enable apt-daily-upgrade.timer
+enable fwupd-refresh.timer
+enable clamav-freshclam.service
+enable smartmontools.service
+enable fstrim.timer
+# Off: remote login, unconfigured A/B updates, MOTD ads
+disable ssh.service
+disable ssh.socket
+disable systemd-sysupdate.timer
+disable systemd-sysupdate-reboot.timer
+disable motd-news.timer
