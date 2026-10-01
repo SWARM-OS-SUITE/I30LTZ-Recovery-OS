@@ -129,8 +129,9 @@ before=$(lsblk -lnpo NAME "$disk" | tail -n +2 | sort)
 [[ $new_table == 1 ]] && sgdisk -o "$disk" >/dev/null
 sgdisk -n "0:${esp_start}:${esp_end}" -t "0:${ESP_TYPE}" -c 0:I30LTZ-ESP "$disk" >/dev/null
 sgdisk -n "0:${root_start}:${root_end}" -t "0:${ROOT_TYPE}" -c 0:i30ltz-root "$disk" >/dev/null
-partprobe "$disk" 2>/dev/null || partx -u "$disk" 2>/dev/null || true
-udevadm settle
+partprobe "$disk" 2>/dev/null || true
+partx -a "$disk" 2>/dev/null || true; partx -u "$disk" 2>/dev/null || true
+udevadm settle 2>/dev/null || sleep 2
 after=$(lsblk -lnpo NAME "$disk" | tail -n +2 | sort)
 mapfile -t added < <(comm -13 <(echo "$before") <(echo "$after"))
 ((${#added[@]} == 2)) || die "expected 2 new partitions, found ${#added[@]} — stopping before writing data"
