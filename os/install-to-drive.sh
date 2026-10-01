@@ -3,12 +3,14 @@
 # I30LTZ Recovery OS — install a built image onto an external drive
 # v0.1.0 · 2026-10-01
 #
-#   sudo bash install-to-drive.sh <out/vX_DATE dir> <disk> [--root-size 40G] [--dry-run]
+#   sudo bash install-to-drive.sh <out/vX_DATE dir> <disk> [--root-size 32G] [--dry-run]
 #   e.g. sudo bash install-to-drive.sh out/v0.1.0_2026-10-01 /dev/sdb --dry-run
 #
-# What it does: adds TWO new partitions (ESP + root) in the drive's largest
-# FREE space and copies the OS into them. Existing partitions — like the
-# boltz data partition — are never written, moved or resized.
+# What it does: adds TWO new partitions in the drive's largest FREE space:
+# a 1G boot partition and the OS (32G by default, --root-size to change,
+# --use-all-free to take the whole gap). Everything else on the drive stays
+# free for you. Existing partitions — like the boltz data partition — are
+# never written, moved or resized.
 #
 # It refuses to run when the target:
 #   • is an internal NVMe / not USB-attached        (SWARM_OS lives there)
@@ -21,17 +23,19 @@ set -Eeuo pipefail
 ROOT_TYPE=4f68bce3-e8cd-4db1-96e7-fbcaf984b709   # GPT "Linux root (x86-64)"
 ESP_TYPE=c12a7328-f81f-11d2-ba4b-00a0c93ec93b
 MIN_ROOT_GB=12
+DEFAULT_ROOT=32G      # the OS + a few cases/SWARM builds; never the whole drive by default
 
 red() { printf '\033[1;31m%s\033[0m\n' "$*"; }
 yel() { printf '\033[1;33m%s\033[0m\n' "$*"; }
 grn() { printf '\033[1;32m%s\033[0m\n' "$*"; }
 die() { red "✋ $*"; exit 1; }
 
-dir="" disk="" root_size="" dry=0 allow_non_usb=0
+dir="" disk="" root_size="$DEFAULT_ROOT" dry=0 allow_non_usb=0 use_all=0
 while (($#)); do
   case "$1" in
     --root-size) root_size="${2:?}"; shift 2 ;;
     --dry-run) dry=1; shift ;;
+    --use-all-free) use_all=1; shift ;;
     --i-know-its-not-usb) allow_non_usb=1; shift ;;   # loop-device tests only
     -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
     *) if [[ -z "$dir" ]]; then dir="$1"; elif [[ -z "$disk" ]]; then disk="$1"; else die "unexpected: $1"; fi; shift ;;
@@ -98,15 +102,16 @@ align=$(( 1048576 / sector ))
 gap_start=$(( (gap_start + align - 1) / align * align ))
 gap_bytes=$(( (gap_end - gap_start + 1) * sector ))
 esp_sectors=$(( esp_bytes / sector ))
-if [[ -n "$root_size" ]]; then
-  root_bytes=$(numfmt --from=iec "${root_size%B}")
-else
+if [[ $use_all == 1 ]]; then
   root_bytes=$(( gap_bytes - esp_bytes - 1048576 ))
+else
+  root_bytes=$(numfmt --from=iec "${root_size%B}") || die "can't read --root-size '$root_size' (use e.g. 32G)"
 fi
 root_bytes=$(( root_bytes / 1048576 * 1048576 ))
 (( root_bytes >= MIN_ROOT_GB * 1024**3 )) || die "only $(numfmt --to=iec $gap_bytes) free on $disk — need at least $((MIN_ROOT_GB+1))G"
 (( root_bytes >= root_img_bytes )) || die "root size smaller than the OS image ($(numfmt --to=iec $root_img_bytes))"
-(( esp_bytes + root_bytes <= gap_bytes )) || die "not enough free space: need $(numfmt --to=iec $((esp_bytes+root_bytes))), have $(numfmt --to=iec $gap_bytes)"
+(( esp_bytes + root_bytes <= gap_bytes )) || die "not enough free space: need $(numfmt --to=iec $((esp_bytes+root_bytes))), have $(numfmt --to=iec $gap_bytes) — try a smaller --root-size"
+left_bytes=$(( gap_bytes - esp_bytes - root_bytes ))
 esp_start=$gap_start; esp_end=$(( esp_start + esp_sectors - 1 ))
 root_start=$(( esp_end + 1 )); root_end=$(( root_start + root_bytes / sector - 1 ))
 
@@ -123,6 +128,8 @@ echo
 echo "  ADDED in free space:"
 printf '    %-12s %8s  %s\n' "I30LTZ-ESP" "$(numfmt --to=iec $esp_bytes)" "EFI boot partition"
 printf '    %-12s %8s  %s\n' "i30ltz-root" "$(numfmt --to=iec $root_bytes)" "I30LTZ Recovery OS"
+echo
+echo "  LEFT FREE for you: $(numfmt --to=iec $left_bytes)"
 echo
 if [[ $dry == 1 ]]; then grn "  dry run — nothing was written."; exit 0; fi
 want=$(basename "$disk")
