@@ -7,8 +7,8 @@
 #
 # Run on the fresh Recovery OS install on the external drive. Never on
 # SWARM_OS (the X13's internal NVMe).
-#   sudo bash first-boot.sh --dry-run --user YOURNAME
-#   sudo bash first-boot.sh --user YOURNAME
+#   sudo bash first-boot.sh --dry-run --user "$USER"
+#   sudo bash first-boot.sh --user "$USER"
 # =============================================================================
 KIT_ID="i30ltz-first-boot"
 KIT_TITLE="I30LTZ Recovery OS"
