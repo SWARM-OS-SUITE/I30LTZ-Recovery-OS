@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Dr. I30LTZ "MAD IT" console — the I30LTZ Recovery OS kiosk home screen
+# v0.1.0 · 2026-10-01 · runs full-screen (cage + foot) as user i30ltz
+# Every risky action asks first. The internal NVMe is never written by this
+# menu: imaging READS from it and writes to the case store on this drive.
+# =============================================================================
+set -uo pipefail
+export DIALOGRC=/etc/i30ltz/dialogrc
+# shellcheck source=/dev/null
+. /etc/i30ltz/release 2>/dev/null || true
+VER="v${OS_VERSION:-?} · ${OS_BUILD_DATE:-?}"
+CASES=/var/lib/i30ltz/cases
+TITLE=" I30LTZ RECOVERY OS · Dr. I30LTZ \"MAD IT\" · ${VER} "
+
+pause() { printf '\n\033[1;33m── press Enter to return to Dr. I30LTZ ──\033[0m'; read -r _; }
+say()   { dialog --backtitle "$TITLE" --title " $1 " --msgbox "$2" 12 64; }
+ask()   { dialog --backtitle "$TITLE" --title " $1 " --yesno "$2" 12 64; }
+
+# pick_disk "title" → prints /dev/xxx of a whole disk the user chose
+pick_disk() {
+  local items=() name size tran model
+  while IFS= read -r line; do
+    name=$(sed -n 's/.*NAME="\([^"]*\)".*/\1/p' <<<"$line")
+    size=$(sed -n 's/.*SIZE="\([^"]*\)".*/\1/p' <<<"$line")
+    tran=$(sed -n 's/.*TRAN="\([^"]*\)".*/\1/p' <<<"$line")
+    model=$(sed -n 's/.*MODEL="\([^"]*\)".*/\1/p' <<<"$line")
+    [[ "$name" == /dev/zram* || "$name" == /dev/loop* ]] && continue
+    items+=("$name" "${size} ${tran:-?} ${model:-}")
+  done < <(lsblk -dpnP -o NAME,SIZE,TRAN,MODEL)
+  ((${#items[@]})) || { say "$1" "No disks found."; return 1; }
+  dialog --backtitle "$TITLE" --title " $1 " --menu "Choose a disk:" 18 72 10 "${items[@]}" 3>&1 1>&2 2>&3
+}
+
+act_disks()  { clear; i30ltz-disks; pause; }
+
+act_health() {
+  local d; d=$(pick_disk "Drive health (SMART)") || return
+  clear; echo "🩺 SMART health for $d"; echo
+  sudo smartctl -H -A -i "$d" | less -R
+}
+
+act_writeblock() {
+  local d mode; d=$(pick_disk "Write-blocker") || return
+  mode=$(dialog --backtitle "$TITLE" --title " Write-blocker · $d " --menu "Kernel-level read-only switch:" 14 60 3 \
+    on "🔒 make READ-ONLY (before recovery)" off "🔓 make read-write again" status "show current state" 3>&1 1>&2 2>&3) || return
+  clear; sudo i30ltz-writeblock "$mode" "$d"; pause
+}
+
+act_image() {
+  local d case_id dest free_gb need_gb
+  d=$(pick_disk "Image a failing drive (ddrescue)") || return
+  case_id=$(dialog --backtitle "$TITLE" --title " Case name " --inputbox "Name this case (letters, numbers, dashes):" 9 60 "case-$(date +%Y%m%d-%H%M)" 3>&1 1>&2 2>&3) || return
+  case_id=${case_id//[^A-Za-z0-9._-]/-}
+  dest="$CASES/$case_id"
+  need_gb=$(( $(lsblk -bdno SIZE "$d") / 1024 / 1024 / 1024 + 1 ))
+  free_gb=$(df -BG --output=avail "$CASES" | tail -1 | tr -dc '0-9')
+  if (( free_gb < need_gb )); then
+    say "Not enough space" "Imaging $d needs ~${need_gb}G but the case store has ${free_gb}G free.\n\nUse a bigger drive or free space first."
+    return
+  fi
+  ask "Confirm" "READ from:  $d\nWRITE to:   $dest/image.img\n\n$d is switched READ-ONLY first, so it cannot be damaged.\nContinue?" || return
+  clear; mkdir -p "$dest"
+  sudo i30ltz-writeblock on "$d" && \
+  sudo ddrescue -d -r3 "$d" "$dest/image.img" "$dest/image.map"
+  echo; echo "📁 Case saved in $dest  (re-run the same case to resume)"; pause
+}
+
+act_photorec() {
+  local d dest; d=$(dialog --backtitle "$TITLE" --title " Recover deleted files " --inputbox "Disk or image to scan (e.g. /dev/sdb or a case image.img):" 9 70 "$CASES/" 3>&1 1>&2 2>&3) || return
+  dest="$CASES/recovered-$(date +%Y%m%d-%H%M)"; mkdir -p "$dest"
+  clear; echo "Recovered files will go to: $dest"; sleep 2
+  sudo photorec /log /d "$dest/" "$d"; pause
+}
+
+act_testdisk()  { clear; sudo testdisk /log; pause; }
+
+act_scan() {
+  local p; p=$(dialog --backtitle "$TITLE" --title " Malware scan (ClamAV) " --inputbox "Folder to scan (e.g. a mounted drive):" 9 70 "/mnt" 3>&1 1>&2 2>&3) || return
+  clear; sudo clamscan -r -i --bell "$p"; pause
+}
+
+act_build() {
+  local p; p=$(dialog --backtitle "$TITLE" --title " Build SWARM_OS " --inputbox "archiso profile folder (contains profiledef.sh):" 9 70 "$HOME/SWARM_OS/30-source/swarm-os/" 3>&1 1>&2 2>&3) || return
+  clear; swarm-build "$p"; pause
+}
+
+act_testiso() {
+  local iso; iso=$(ls -t /var/lib/i30ltz/swarm-build/out/*.iso 2>/dev/null | head -1)
+  iso=$(dialog --backtitle "$TITLE" --title " Test an ISO in a VM " --inputbox "ISO to boot (your real drives are never attached):" 9 70 "${iso:-}" 3>&1 1>&2 2>&3) || return
+  clear; swarm-test-iso "$iso"; pause
+}
+
+act_ai() {
+  say "Dr. I30LTZ · MAD IT (AI)" "The on-device AI arrives in v0.2:\n\n• MAD IT answers repair questions offline\n• Lucille (LLcy) is reached from this drive's boltz data\n\nTracked in docs/SUITE_ARCHITECTURE.md (path A)."
+}
+
+act_network() { clear; nmtui; }
+act_shell()   { clear; echo "Admin shell — type 'exit' to return to Dr. I30LTZ."; bash -l; }
+act_about() {
+  say "About" "I30LTZ Recovery OS ${VER}\nUbuntu ${OS_BASE_RELEASE:-24.04} LTS base · external drive\n\nAssistant: Dr. I30LTZ \"MAD IT\"\nRoles: repair · data recovery · builds SWARM_OS\n\nSuite: SWARM_OS (internal NVMe) + LUCILLE \"LLcy\"\nImagined by I320K3-N-I30LTZ"
+}
+act_power() {
+  local c; c=$(dialog --backtitle "$TITLE" --title " Power " --menu "" 11 40 3 reboot "Restart" poweroff "Shut down" back "Back" 3>&1 1>&2 2>&3) || return
+  case "$c" in reboot) systemctl reboot ;; poweroff) systemctl poweroff ;; esac
+}
+
+while true; do
+  choice=$(dialog --backtitle "$TITLE" --title " 🩺 Dr. I30LTZ · what's wrong with the patient? " \
+    --cancel-label "Power" --menu "\n Arrow keys + Enter. Ctrl+Alt+F2 = text login.\n" 24 74 14 \
+    1  "🗺  Disk map — which drive is which" \
+    2  "🩺 Drive health (SMART)" \
+    3  "🔒 Write-blocker on / off" \
+    4  "💾 Image a failing drive → new case" \
+    5  "♻  Recover deleted files (PhotoRec)" \
+    6  "🧩 Repair partitions (TestDisk)" \
+    7  "🦠 Malware scan (ClamAV)" \
+    8  "🏗  Build SWARM_OS (Arch container)" \
+    9  "🧪 Test an ISO in a VM" \
+    10 "🤖 Dr. I30LTZ · MAD IT AI  (v0.2)" \
+    11 "📶 Wi-Fi / network" \
+    12 "⌨  Admin shell" \
+    13 "ℹ  About this OS" \
+    3>&1 1>&2 2>&3) || { act_power; continue; }
+  case "$choice" in
+    1) act_disks ;; 2) act_health ;; 3) act_writeblock ;; 4) act_image ;;
+    5) act_photorec ;; 6) act_testdisk ;; 7) act_scan ;; 8) act_build ;;
+    9) act_testiso ;; 10) act_ai ;; 11) act_network ;; 12) act_shell ;; 13) act_about ;;
+  esac
+done
