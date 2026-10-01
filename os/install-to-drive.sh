@@ -140,6 +140,7 @@ for p in "${added[@]}"; do
   case "$(lsblk -dno PARTLABEL "$p")" in I30LTZ-ESP) esp_dev=$p ;; i30ltz-root) root_dev=$p ;; esac
 done
 [[ -n "$esp_dev" && -n "$root_dev" ]] || die "could not identify the new partitions — stopping before writing data"
+[[ -b "$esp_dev" && -b "$root_dev" ]] || die "new partitions have no device nodes yet — stopping before writing data (re-plug the drive and retry)"
 
 # ── 6 · copy the OS into ONLY the two new partitions ───────────────────────
 yel "writing boot partition → $esp_dev"
