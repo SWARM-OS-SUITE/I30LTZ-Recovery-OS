@@ -13,6 +13,14 @@ VER="v${OS_VERSION:-?} · ${OS_BUILD_DATE:-?}"
 CASES=/var/lib/i30ltz/cases
 TITLE=" I30LTZ RECOVERY OS · Dr. I30LTZ \"MAD IT\" · ${VER} "
 
+# foot hands the terminal its real size a moment after start — draw only after
+# that, or the menu is laid out for 80x24 and wiped by the resize.
+for _ in $(seq 1 40); do
+  sz=$(stty size 2>/dev/null || true)
+  [[ -n "$sz" && "$sz" != "24 80" ]] && break
+  sleep 0.1
+done
+
 pause() { printf '\n\033[1;33m── press Enter to return to Dr. I30LTZ ──\033[0m'; read -r _; }
 say()   { dialog --backtitle "$TITLE" --title " $1 " --msgbox "$2" 12 64; }
 ask()   { dialog --backtitle "$TITLE" --title " $1 " --yesno "$2" 12 64; }
@@ -121,7 +129,12 @@ while true; do
     11 "📶 Wi-Fi / network" \
     12 "⌨  Admin shell" \
     13 "ℹ  About this OS" \
-    3>&1 1>&2 2>&3) || { act_power; continue; }
+    3>&1 1>&2 2>&3); rc=$?
+  case $rc in
+    0) ;;                          # picked an item
+    1) act_power; continue ;;      # "Power" button
+    *) clear; continue ;;          # Esc or screen resized → redraw
+  esac
   case "$choice" in
     1) act_disks ;; 2) act_health ;; 3) act_writeblock ;; 4) act_image ;;
     5) act_photorec ;; 6) act_testdisk ;; 7) act_scan ;; 8) act_build ;;
