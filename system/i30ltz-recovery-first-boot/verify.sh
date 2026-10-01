@@ -52,4 +52,4 @@ step "Not pretending to be SWARM_OS"
 check "no SWARM_OS identity here"        test ! -e /etc/swarm_os/release
 
 printf '\n%s%d passed%s · %s%d missing%s\n' "$C_GREEN" "$pass" "$C_NC" "$C_RED" "$fail" "$C_NC"
-((fail == 0)) || echo "Re-run a module, e.g.:  sudo bash first-boot.sh --user YOURNAME --only 40-swarm-builder"
+((fail == 0)) || echo "Re-run a module, e.g.:  sudo bash migrate-to-v2.1.sh  or  sudo bash first-boot.sh --user \"$USER\" --only 40-swarm-builder"
