@@ -130,22 +130,27 @@ read -r -p "  Type the disk name ($want) to install, anything else cancels: " an
 [[ "$ans" == "$want" ]] || { yel "  cancelled — nothing was written."; exit 0; }
 
 # ── 5 · partition (new table only if the disk was empty) ───────────────────
-before=$(lsblk -lnpo NAME "$disk" | tail -n +2 | sort)
+part_nums() { sgdisk -p "$disk" 2>/dev/null | awk '$1 ~ /^[0-9]+$/ {print $1}' | sort; }
+part_path() { if [[ "$disk" =~ [0-9]$ ]]; then echo "${disk}p$1"; else echo "${disk}$1"; fi; }
 [[ $new_table == 1 ]] && sgdisk -o "$disk" >/dev/null
+before=$(part_nums)
 sgdisk -n "0:${esp_start}:${esp_end}" -t "0:${ESP_TYPE}" -c 0:I30LTZ-ESP "$disk" >/dev/null
 sgdisk -n "0:${root_start}:${root_end}" -t "0:${ROOT_TYPE}" -c 0:i30ltz-root "$disk" >/dev/null
-partprobe "$disk" 2>/dev/null || true
-partx -a "$disk" 2>/dev/null || true; partx -u "$disk" 2>/dev/null || true
-udevadm settle 2>/dev/null || sleep 2
-after=$(lsblk -lnpo NAME "$disk" | tail -n +2 | sort)
+after=$(part_nums)
 mapfile -t added < <(comm -13 <(echo "$before") <(echo "$after"))
 ((${#added[@]} == 2)) || die "expected 2 new partitions, found ${#added[@]} — stopping before writing data"
+partprobe "$disk" 2>/dev/null || true
+partx -a "$disk" 2>/dev/null || true; partx -u "$disk" 2>/dev/null || true
+udevadm settle 2>/dev/null || true
 esp_dev=""; root_dev=""
-for p in "${added[@]}"; do
+for n in "${added[@]}"; do
+  p=$(part_path "$n")
+  for _ in $(seq 1 50); do [[ -b "$p" ]] && break; sleep 0.2; done
+  [[ -b "$p" ]] || die "partition $p never appeared — stopping before writing data (re-plug the drive and retry)"
   case "$(part_field "$p" PART_ENTRY_NAME)" in I30LTZ-ESP) esp_dev=$p ;; i30ltz-root) root_dev=$p ;; esac
 done
 [[ -n "$esp_dev" && -n "$root_dev" ]] || die "could not identify the new partitions — stopping before writing data"
-[[ -b "$esp_dev" && -b "$root_dev" ]] || die "new partitions have no device nodes yet — stopping before writing data (re-plug the drive and retry)"
+[[ "$esp_dev" != "$root_dev" ]] || die "partition mix-up — stopping before writing data"
 
 # ── 6 · copy the OS into ONLY the two new partitions ───────────────────────
 yel "writing boot partition → $esp_dev"
