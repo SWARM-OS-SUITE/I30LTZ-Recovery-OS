@@ -119,7 +119,21 @@ act_power() {
   case "$c" in reboot) systemctl reboot ;; poweroff) systemctl poweroff ;; esac
 }
 
+# If the screen size changes while the menu is open (compositor still settling,
+# or a monitor plugged in), close it so the loop redraws it at the right size.
+watch_resize() {
+  local start now
+  start=$(stty size </dev/tty 2>/dev/null || true)
+  while sleep 0.3; do
+    now=$(stty size </dev/tty 2>/dev/null || true)
+    if [[ -n "$now" && "$now" != "$start" ]]; then
+      pkill -TERM -x -u "$(id -u)" dialog 2>/dev/null; return
+    fi
+  done
+}
+
 while true; do
+  watch_resize & watcher=$!
   choice=$(dialog --backtitle "$TITLE" --title " 🩺 Dr. I30LTZ · what's wrong with the patient? " \
     --cancel-label "Power" --menu "\n Arrow keys + Enter. Ctrl+Alt+F2 = text login.\n" 24 74 14 \
     1  "🗺  Disk map — which drive is which" \
@@ -136,6 +150,7 @@ while true; do
     12 "⌨  Admin shell" \
     13 "ℹ  About this OS" \
     3>&1 1>&2 2>&3); rc=$?
+  kill "$watcher" 2>/dev/null; wait "$watcher" 2>/dev/null
   case $rc in
     0) ;;                          # picked an item
     1) act_power; continue ;;      # "Power" button
