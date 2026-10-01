@@ -83,6 +83,16 @@ systemctl mask ssh.service ssh.socket 2>/dev/null || true
 systemctl disable systemd-networkd.service systemd-networkd.socket systemd-networkd-wait-online.service 2>/dev/null || true
 # Not used: A/B sysupdate isn't configured yet; no ad-style MOTD news.
 systemctl mask systemd-sysupdate.timer systemd-sysupdate-reboot.timer 2>/dev/null || true
+
+# ── image-based kernel + bootloader ─────────────────────────────────────────
+# The kernel lives inside a signed-off UKI on the ESP, and the ESP may be
+# SHARED with another OS (e.g. Ubuntu on the same drive). So this OS never
+# rewrites boot files by itself: new kernels arrive with new image builds.
+systemctl mask systemd-boot-update.service 2>/dev/null || true
+apt-mark hold linux-image-generic linux-generic 'linux-image-[0-9]*' 'linux-modules-[0-9]*' >/dev/null 2>&1 || true
+for d in /etc/kernel/postinst.d /etc/kernel/postrm.d; do
+  [[ -d "$d" ]] && find "$d" -maxdepth 1 -type f -name '*systemd-boot*' -exec chmod -x {} +
+done
 systemctl disable motd-news.timer 2>/dev/null || true
 
 # ── boot splash ─────────────────────────────────────────────────────────────

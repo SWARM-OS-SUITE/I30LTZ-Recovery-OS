@@ -1,0 +1,6 @@
+// I30LTZ Recovery OS v0.1.0 · 2026-10-01
+// Kernels ship inside the boot image (UKI): update them by building a new
+// image, never by unattended-upgrades writing to a possibly shared ESP.
+Unattended-Upgrade::Package-Blacklist {
+    "linux-";
+};
