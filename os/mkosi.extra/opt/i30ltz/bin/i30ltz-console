@@ -15,10 +15,16 @@ TITLE=" I30LTZ RECOVERY OS · Dr. I30LTZ \"MAD IT\" · ${VER} "
 
 # foot hands the terminal its real size a moment after start — draw only after
 # that, or the menu is laid out for 80x24 and wiped by the resize.
-for _ in $(seq 1 40); do
+# The compositor can resize more than once, so wait for 1s of stable size.
+prev="" stable=0
+for _ in $(seq 1 80); do
   sz=$(stty size 2>/dev/null || true)
-  [[ -n "$sz" && "$sz" != "24 80" ]] && break
-  sleep 0.1
+  if [[ -n "$sz" && "$sz" != "24 80" && "$sz" == "$prev" ]]; then
+    stable=$((stable + 1)); ((stable >= 10)) && break
+  else
+    stable=0
+  fi
+  prev=$sz; sleep 0.1
 done
 
 pause() { printf '\n\033[1;33m── press Enter to return to Dr. I30LTZ ──\033[0m'; read -r _; }
