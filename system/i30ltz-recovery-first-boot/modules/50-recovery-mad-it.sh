@@ -28,23 +28,7 @@ fi
 # ── Evidence safety ────────────────────────────────────────────────────────
 # Recovery rule #1: never write to the patient drive. This helper flips a
 # disk and all its partitions to kernel-level read-only before you image it.
-write_file /opt/i30ltz/bin/i30ltz-writeblock 0755 <<'SH'
-#!/usr/bin/env bash
-# Dr. I30LTZ "MAD IT" — software write-blocker v1.0.0 · 2026-09-30
-# usage: sudo i30ltz-writeblock on|off|status /dev/sdX
-set -euo pipefail
-mode="${1:-status}"; dev="${2:-}"
-[[ -b "$dev" ]] || { echo "usage: sudo $0 on|off|status /dev/sdX"; lsblk -dpno NAME,SIZE,MODEL; exit 1; }
-# shellcheck disable=SC2207
-parts=("$dev" $(lsblk -lnpo NAME "$dev" | tail -n +2))
-case "$mode" in
-  on)  for p in "${parts[@]}"; do blockdev --setro "$p"; done; echo "🔒 READ-ONLY: ${parts[*]}" ;;
-  off) for p in "${parts[@]}"; do blockdev --setrw "$p"; done; echo "🔓 read-write: ${parts[*]}" ;;
-  status) for p in "${parts[@]}"; do printf '%-16s %s\n' "$p" "$([[ $(blockdev --getro "$p") == 1 ]] && echo 'READ-ONLY' || echo 'read-write')"; done ;;
-  *) echo "mode must be on|off|status"; exit 1 ;;
-esac
-SH
-run ln -sf /opt/i30ltz/bin/i30ltz-writeblock /usr/local/bin/i30ltz-writeblock
+install_helper i30ltz-writeblock   # source: os/mkosi.extra/opt/i30ltz/bin
 
 write_file /etc/i30ltz/release 0644 <<'CFG'
 # I30LTZ Recovery OS — machine identity

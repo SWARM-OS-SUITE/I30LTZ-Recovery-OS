@@ -99,3 +99,12 @@ enable_component() {  # universe / multiverse / restricted
     APT_DIRTY=1
   fi
 }
+
+# install_helper NAME — copy a Dr. I30LTZ helper from the shared OS tree
+# (os/mkosi.extra/opt/i30ltz/bin, the same files baked into the OS image).
+install_helper() {
+  local name="$1" src="$REPO_DIR/os/mkosi.extra/opt/i30ltz/bin/$1"
+  [[ -f "$src" ]] || die "missing helper source: $src"
+  run install -D -m 0755 "$src" "/opt/i30ltz/bin/$name"
+  run ln -sf "/opt/i30ltz/bin/$name" "/usr/local/bin/$name"
+}
