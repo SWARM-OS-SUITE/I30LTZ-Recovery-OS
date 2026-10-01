@@ -67,7 +67,8 @@ partnum=$(cat "/sys/class/block/$(basename "$part")/partition")
 tran=$(lsblk -dno TRAN "$disk" | xargs || true)
 [[ "$tran" == usb || $allow_non_usb == 1 ]] || die "$disk is not USB-attached (transport: ${tran:-unknown}). Recovery OS belongs on an external drive."
 findmnt -rno TARGET -S "$part" >/dev/null 2>&1 && die "$part is mounted ($(findmnt -rno TARGET -S "$part" | head -1)) — unmount it first"
-[[ "$(readlink -f "$(findmnt -no SOURCE /)")" == "$(readlink -f "$part")" ]] && die "$part is the running system's root"
+root_dev=$(findmnt -no SOURCE / | sed 's/\[.*//')          # btrfs shows /dev/sda2[/@]
+[[ "$(readlink -f "$root_dev")" == "$(readlink -f "$part")" ]] && die "$part is the running system's root"
 part_bytes=$(blockdev --getsize64 "$part")
 (( part_bytes >= root_img_bytes )) || die "$part is $(numfmt --to=iec "$part_bytes") — the OS needs at least $(numfmt --to=iec "$root_img_bytes")"
 while read -r p; do
@@ -123,7 +124,11 @@ read -r -p "  Type the partition name ($want) to ERASE it and install, anything 
 [[ "$ans" == "$want" ]] || { yel "  cancelled — nothing was written."; exit 0; }
 
 # ── 5 · write the OS into the one partition ────────────────────────────────
-sgdisk -t "${partnum}:${ROOT_TYPE}" -c "${partnum}:i30ltz-root" "$disk" >/dev/null
+# On a drive that's in use, sgdisk may warn that the kernel keeps the old
+# table until reboot; the type change is still written. Verify on disk.
+sgdisk -t "${partnum}:${ROOT_TYPE}" -c "${partnum}:i30ltz-root" "$disk" >/dev/null 2>&1 || true
+[[ "$(part_field "$part" PART_ENTRY_TYPE)" == "$ROOT_TYPE" ]] || \
+  die "couldn't set the partition type on $part — stopping before writing data"
 yel "writing OS → $part"
 dd if="$root_img" of="$part" bs=4M conv=fsync status=progress
 e2fsck -fy "$part" >/dev/null || true
