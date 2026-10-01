@@ -33,9 +33,9 @@ die() { red "✋ $*"; exit 1; }
 part_field() { blkid -p -o value -s "$2" "$1" 2>/dev/null || true; }   # reads the disk, not udev
 by_uuid() {   # PARTUUID=… | UUID=… | /dev/… → device path
   case "$1" in
-    PARTUUID=*|UUID=*) blkid -t "$1" -o device 2>/dev/null | head -1 ;;
+    PARTUUID=*|UUID=*) blkid -t "$1" -o device 2>/dev/null | head -1 || true ;;
     /dev/*) echo "$1" ;;
-    *) blkid -t "PARTUUID=$1" -o device 2>/dev/null | head -1 ;;
+    *) blkid -t "PARTUUID=$1" -o device 2>/dev/null | head -1 || true ;;
   esac
 }
 
@@ -115,7 +115,7 @@ esp_mnt=$(findmnt -rno TARGET -S "$esp" | head -1 || true)
 esp_has() { if [[ -n "$esp_mnt" ]]; then [[ -e "$esp_mnt/$1" ]]; else mdir -i "$esp" "::/$1" >/dev/null 2>&1; fi; }
 need=$(( $(stat -c %s "$work/$uki_name") + $(stat -c %s "$work/systemd-bootx64.efi") + 4*1048576 ))
 if [[ -n "$esp_mnt" ]]; then have=$(df -B1 --output=avail "$esp_mnt" | tail -1 | tr -dc '0-9')
-else have=$(mdir -i "$esp" ::/ 2>/dev/null | sed -n 's/.* \([0-9 ]*\) bytes free.*/\1/p' | tr -dc '0-9'); fi
+else have=$(mdir -i "$esp" ::/ 2>/dev/null | grep 'bytes free' | tr -dc '0-9'); fi   # "1 070 000 000 bytes free"
 (( ${have:-0} >= need )) || die "EFI partition $esp has $(numfmt --to=iec "${have:-0}") free — needs $(numfmt --to=iec $need)"
 loader_conf_exists=0; esp_has loader/loader.conf && loader_conf_exists=1
 
