@@ -31,9 +31,18 @@ Then plug boltz into the X13, power on, press **F12**, and pick the USB drive.
 ## Installing onto boltz keeps your data
 
 `install-to-drive.sh` only **adds two partitions in free space**: a 1G boot
-partition and the OS. It never writes to, moves or resizes existing
-partitions, so the boltz data partition (Lucille-AI / I30LTZ copies) stays
-exactly as it is. It refuses to run when the target:
+partition and the OS, which is **32G by default**. It never takes the whole
+drive. The preview shows exactly how much stays **free for you**:
+
+```bash
+sudo bash install-to-drive.sh out/v0.1.0_<date> /dev/sdX --dry-run                   # OS gets 32G
+sudo bash install-to-drive.sh out/v0.1.0_<date> /dev/sdX --dry-run --root-size 20G   # pick a size (min 12G)
+sudo bash install-to-drive.sh out/v0.1.0_<date> /dev/sdX --dry-run --use-all-free    # only if you want that
+```
+
+It never writes to, moves or resizes existing partitions, so the boltz data
+partition (Lucille-AI / I30LTZ copies) stays exactly as it is. It refuses to
+run when the target:
 
 - is the internal NVMe or isn't USB-attached (that's where SWARM_OS lives),
 - holds the running system or has anything mounted (`sudo umount /mnt/boltz` first),
@@ -47,7 +56,7 @@ installing, the data partition was **byte-for-byte identical**, and the OS
 booted to the first-boot wizard.
 
 > If boltz has no free space: back up the data partition, shrink it with
-> GParted to free ~30G, then run the installer.
+> GParted to free ~33G (32G OS + 1G boot), then run the installer.
 
 ## What's inside
 
