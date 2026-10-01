@@ -1,0 +1,25 @@
+# I30LTZ Recovery OS v0.1.0 · 2026-10-01 — full-screen Dr. I30LTZ console on tty1
+[Unit]
+Description=I30LTZ Recovery OS kiosk (Dr. I30LTZ console)
+After=systemd-user-sessions.service plymouth-quit-wait.service i30ltz-firstboot.service
+Wants=i30ltz-firstboot.service
+Conflicts=getty@tty1.service
+
+[Service]
+User=i30ltz
+PAMName=login
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+StandardInput=tty-fail
+UtmpIdentifier=tty1
+UtmpMode=user
+Environment=XDG_SESSION_TYPE=wayland
+# -s lets Ctrl+Alt+F2..F6 reach a text login as an emergency hatch
+ExecStart=/usr/bin/cage -s -- /usr/bin/foot --fullscreen --config=/etc/i30ltz/foot.ini /opt/i30ltz/bin/i30ltz-console
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=graphical.target

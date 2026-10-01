@@ -1,0 +1,5 @@
+// I30LTZ Recovery OS v0.1.0 · 2026-10-01 — security fixes install themselves
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::AutocleanInterval "7";
