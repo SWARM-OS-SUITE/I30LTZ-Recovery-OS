@@ -28,7 +28,35 @@ sudo bash install-to-drive.sh out/v0.1.0_<date> /dev/sdX            #    then in
 
 Then plug boltz into the X13, power on, press **F12**, and pick the USB drive.
 
-## Installing onto boltz keeps your data
+## Install into one partition on a shared drive (by UUID) ⭐ recommended for the X13
+
+Use this when the OS gets **its own partition on a drive that holds other
+things**, like the Crucial X9 with the Ubuntu build machine, backups and the
+spare `i30ltz-recovery` partition. Pick the partition by **PARTUUID**, so
+drive names like sda/sdb never matter:
+
+```bash
+lsblk -o NAME,SIZE,LABEL,PARTUUID /dev/sda                    # copy the PARTUUID of i30ltz-recovery
+sudo bash install-to-partition.sh out/v0.1.0_<date> PARTUUID=<uuid> --dry-run
+sudo bash install-to-partition.sh out/v0.1.0_<date> PARTUUID=<uuid>
+```
+
+| Changes | Never changes |
+|---|---|
+| The one partition you name, which becomes the OS | The **partition table** (not rewritten) |
+| Files **added** to the drive's EFI partition: `EFI/i30ltz/…` and `loader/entries/i30ltz-recovery-os.conf` | Ubuntu's boot files, and every other partition |
+| A new **"I30LTZ Recovery OS"** entry in the F12 menu, placed **after** your default | Your normal boot order |
+
+The OS boots with `root=PARTUUID=…`. To confirm the install, you type the
+first 8 characters of the PARTUUID. Tested on a test drive shaped like the X9
+(EFI + Ubuntu + backups + target + data): every other partition, the
+partition table and Ubuntu's boot files stayed **byte-for-byte identical**,
+and the installed OS booted to first-boot setup with 0 failed services.
+
+The OS never updates its own kernel or boot loader, so it can't write into
+the shared EFI partition by itself. New kernels arrive with a new image build.
+
+## Install into free space on a drive (install-to-drive.sh)
 
 `install-to-drive.sh` only **adds two partitions in free space**: a 1G boot
 partition and the OS, which is **32G by default**. It never takes the whole
@@ -77,7 +105,8 @@ os/
 ├── README.md               this page
 ├── build.sh                build: pinned mkosi v26 → out/v<version>_<date>/ + SHA256SUMS
 ├── test-vm.sh              boot a build in a UEFI VM (works on a copy)
-├── install-to-drive.sh     put a build onto boltz without touching other partitions
+├── install-to-partition.sh put a build INTO one partition, chosen by PARTUUID (shared drive)
+├── install-to-drive.sh     put a build into a drive's free space (adds 2 partitions)
 ├── mkosi.conf              the recipe: base, packages, boot, build sandbox
 ├── mkosi.version           0.1.0  (bump for each release)
 ├── mkosi.repart/           partition layout: ESP 1G + root
