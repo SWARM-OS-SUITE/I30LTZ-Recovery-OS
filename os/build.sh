@@ -67,5 +67,5 @@ echo
 red "  ✅ built I30LTZ Recovery OS ${VERSION} (${DATE})"
 ls -lh "$DEST"
 echo
-yel "  test it in a VM:   swarm-test-iso is for ISOs — use:  sudo bash $OS_DIR/test-vm.sh $DEST"
+yel "  test it in a VM:   sudo bash $OS_DIR/test-vm.sh $DEST"
 yel "  install to boltz:  sudo bash $OS_DIR/install-to-drive.sh $DEST /dev/sdX"

@@ -8,7 +8,10 @@
 # =============================================================================
 set -euo pipefail
 dir="${1:-}"; mode="${2:-}"
-img=$(ls "$dir"/i30ltz-recovery-os_*.raw 2>/dev/null | grep -vE '\.(esp|root)[^/]*\.raw$|\.root-|\.esp' | head -1 || true)
+img=""
+for f in "$dir"/i30ltz-recovery-os_*.raw; do   # the whole-disk image, not the split partitions
+  [[ "${f##*/}" =~ ^i30ltz-recovery-os_[0-9.]+\.raw$ ]] && img="$f"
+done
 [[ -n "$img" ]] || { echo "usage: sudo bash test-vm.sh <out/vX_DATE dir> [--serial]"; exit 1; }
 work=/var/tmp/i30ltz-vm; mkdir -p "$work"
 code=""; for c in /usr/share/OVMF/OVMF_CODE_4M.fd /usr/share/OVMF/OVMF_CODE.fd; do [[ -f $c ]] && { code=$c; break; }; done
