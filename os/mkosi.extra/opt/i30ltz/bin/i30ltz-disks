@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Dr. I30LTZ disk map v1.0.0 · 2026-10-01 — read-only
+set -euo pipefail
+root_src="$(findmnt -no SOURCE /)"
+root_disk="/dev/$(lsblk -no PKNAME "$(readlink -f "$root_src")" 2>/dev/null | tail -1)"
+[[ "$root_disk" == /dev/ ]] && root_disk="(unknown — LVM/LUKS: see TREE below)"
+echo "🔴 Recovery OS is running from: $root_disk   (DO NOT install SWARM_OS here)"
+echo
+field() { sed -n "s/.*$1=\"\([^\"]*\)\".*/\1/p" <<<"$2"; }
+printf '%-14s %-7s %-6s %-4s %s\n' DISK SIZE TRAN USB? MODEL
+lsblk -dpnP -o NAME,SIZE,TRAN,RM,MODEL | while IFS= read -r line; do
+  name=$(field NAME "$line"); size=$(field SIZE "$line"); tran=$(field TRAN "$line")
+  rm=$(field RM "$line"); model=$(field MODEL "$line")
+  tag=""; [[ "$tran" == nvme || "$name" == /dev/nvme* ]] && tag="  ← internal NVMe (SWARM_OS target)"
+  [[ "$name" == "$root_disk" ]] && tag="  ← THIS Recovery OS drive"
+  printf '%-14s %-7s %-6s %-4s %s%s\n' "$name" "$size" "${tran:--}" "$([[ $rm == 1 || $tran == usb ]] && echo yes || echo no)" "${model:--}" "$tag"
+done
+echo; echo "TREE:"; lsblk -po NAME,SIZE,FSTYPE,LABEL,MOUNTPOINTS

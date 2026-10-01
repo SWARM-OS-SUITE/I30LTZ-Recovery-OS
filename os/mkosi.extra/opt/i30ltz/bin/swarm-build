@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# SWARM_OS builder v1.0.0 · 2026-10-01 — runs mkarchiso inside an Arch container
+# usage: swarm-build <archiso-profile-dir> [out-dir]
+#   e.g. swarm-build ~/SWARM_OS/30-source/swarm-os/profile
+set -euo pipefail
+profile="${1:-}"; out="${2:-/var/lib/i30ltz/swarm-build/out}"
+work=/var/lib/i30ltz/swarm-build/work
+if [[ -z "$profile" || ! -f "$profile/profiledef.sh" ]]; then
+  echo "usage: swarm-build <archiso-profile-dir> [out-dir]"
+  echo "       (the profile dir is the one that contains profiledef.sh)"
+  exit 1
+fi
+profile="$(realpath "$profile")"; mkdir -p "$out"; out="$(realpath "$out")"
+free_gb=$(df -BG --output=avail "$work" | tail -1 | tr -dc '0-9')
+(( free_gb >= 20 )) || { echo "need 20G free in $work (have ${free_gb}G)"; exit 1; }
+stamp="$(date +%Y-%m-%d_%H%M%S)"
+echo "🟣 SWARM_OS build · $stamp · profile=$profile → $out"
+sudo rm -rf "${work:?}"/*
+sudo podman run --rm --privileged \
+  -v "$profile":/profile:ro -v "$out":/out -v "$work":/work \
+  -v swarm-pacman-cache:/var/cache/pacman/pkg \
+  docker.io/library/archlinux:latest \
+  bash -c 'pacman -Syu --noconfirm --needed archiso && mkarchiso -v -w /work -o /out /profile'
+sudo rm -rf "${work:?}"/*
+sudo chown -R "$(id -u):$(id -g)" "$out"
+latest="$(ls -t "$out"/*.iso | head -1)"
+( cd "$out" && sha256sum "$(basename "$latest")" > "$(basename "$latest").sha256" )
+echo "✅ built: $latest"
+echo "   test it:  swarm-test-iso \"$latest\""
