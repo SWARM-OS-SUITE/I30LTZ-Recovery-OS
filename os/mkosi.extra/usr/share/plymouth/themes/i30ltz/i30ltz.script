@@ -1,0 +1,33 @@
+# I30LTZ Recovery OS boot splash v0.1.0 · 2026-10-01 — void black, red, yellow
+Window.SetBackgroundTopColor(0.02, 0.02, 0.03);
+Window.SetBackgroundBottomColor(0.18, 0.02, 0.02);
+W = Window.GetWidth(); H = Window.GetHeight();
+
+title = Image.Text("I30LTZ RECOVERY OS", 0.80, 0.10, 0.10, 1, "DejaVu Sans Bold 44");
+sub   = Image.Text("Dr. I30LTZ  ·  MAD IT", 0.94, 0.75, 0.13, 1, "DejaVu Sans 22");
+ver   = Image.Text("v0.1.0  ·  2026-10-01", 0.55, 0.55, 0.60, 1, "DejaVu Sans Mono 14");
+t = Sprite(title); t.SetPosition(W/2 - title.GetWidth()/2, H*0.38, 1);
+s = Sprite(sub);   s.SetPosition(W/2 - sub.GetWidth()/2,   H*0.38 + title.GetHeight() + 14, 1);
+v = Sprite(ver);   v.SetPosition(W/2 - ver.GetWidth()/2,   H - ver.GetHeight() - 30, 1);
+
+# progress bar: thin red line that fills toward yellow
+bar_w = W * 0.4; bar_x = W/2 - bar_w/2; bar_y = H*0.62;
+fun progress_cb(duration, progress) {
+  fill = Image.Text("█", 0.80 + 0.14*progress, 0.10 + 0.65*progress, 0.10, 1, "DejaVu Sans Mono 10");
+  n = Math.Int(progress * 40);
+  for (i = 0; i < n; i++) {
+    seg[i] = Sprite(fill);
+    seg[i].SetPosition(bar_x + i * (bar_w/40), bar_y, 2);
+  }
+}
+Plymouth.SetBootProgressFunction(progress_cb);
+
+# password prompt (for encrypted drives)
+fun display_password_cb(prompt, bullets) {
+  p = Image.Text(prompt, 0.94, 0.75, 0.13, 1, "DejaVu Sans 16");
+  ps = Sprite(p); ps.SetPosition(W/2 - p.GetWidth()/2, H*0.70, 3);
+  b = ""; for (i = 0; i < bullets; i++) b += "•";
+  bi = Image.Text(b, 0.80, 0.10, 0.10, 1, "DejaVu Sans 20");
+  bs = Sprite(bi); bs.SetPosition(W/2 - bi.GetWidth()/2, H*0.70 + 30, 3);
+}
+Plymouth.SetDisplayPasswordFunction(display_password_cb);

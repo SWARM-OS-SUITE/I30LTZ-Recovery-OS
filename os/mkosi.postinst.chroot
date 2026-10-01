@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# =============================================================================
+# I30LTZ Recovery OS — build-time setup (runs inside the image, once per build)
+# v0.1.0 · 2026-10-01
+# Branding, the i30ltz account (no password: chosen at first boot), case store,
+# services, firewall, boot splash. $IMAGE_VERSION comes from mkosi.version.
+# =============================================================================
+set -euo pipefail
+VERSION="${IMAGE_VERSION:-0.0.0}"
+BUILD_DATE="$(date -u +%F)"
+
+# ── identity: this is I30LTZ Recovery OS, built on Ubuntu ──────────────────
+# Divert Ubuntu's os-release so package updates can't overwrite our identity.
+if ! dpkg-divert --list /usr/lib/os-release | grep -q os-release; then
+  dpkg-divert --local --rename --divert /usr/lib/os-release.ubuntu --add /usr/lib/os-release
+fi
+. /usr/lib/os-release.ubuntu
+cat > /usr/lib/os-release <<OSR
+NAME="I30LTZ Recovery OS"
+PRETTY_NAME="I30LTZ Recovery OS ${VERSION} (${BUILD_DATE})"
+ID=i30ltz
+ID_LIKE="ubuntu debian"
+VERSION="${VERSION} (${BUILD_DATE})"
+VERSION_ID="${VERSION}"
+VERSION_CODENAME=${VERSION_CODENAME}
+UBUNTU_CODENAME=${UBUNTU_CODENAME:-$VERSION_CODENAME}
+BUILD_ID="${BUILD_DATE}"
+IMAGE_ID=i30ltz-recovery-os
+IMAGE_VERSION="${VERSION}"
+ANSI_COLOR="1;31"
+HOME_URL="https://github.com/cledford955-maker/i30ltz-recovery"
+OSR
+ln -sf ../usr/lib/os-release /etc/os-release
+
+install -d -m 0755 /etc/i30ltz
+cat > /etc/i30ltz/release <<REL
+# I30LTZ Recovery OS — machine identity
+OS="I30LTZ Recovery OS"
+OS_VERSION="${VERSION}"
+OS_BUILD_DATE="${BUILD_DATE}"
+OS_BASE="Ubuntu ${VERSION_ID} LTS"
+OS_BASE_RELEASE="${VERSION_ID}"
+LIVES_ON="external drive"
+ASSISTANT="Dr. I30LTZ (MAD IT)"
+ROLES="repair, data recovery, SWARM_OS builder"
+REL
+
+# ── the one account. Password is LOCKED until the first-boot wizard sets it ─
+if ! id i30ltz >/dev/null 2>&1; then
+  useradd -m -U -s /bin/bash -c "I30LTZ Recovery" i30ltz
+fi
+usermod -aG sudo,kvm,video,render,input,netdev i30ltz 2>/dev/null || usermod -aG sudo,kvm,video,render,input i30ltz
+passwd -l i30ltz >/dev/null
+passwd -l root >/dev/null
+chmod 0750 /home/i30ltz
+
+# ── case store + SWARM_OS build area (group-private) ───────────────────────
+install -d -o root -g i30ltz -m 2770 /var/lib/i30ltz /var/lib/i30ltz/cases /var/log/i30ltz \
+  /var/lib/i30ltz/swarm-build /var/lib/i30ltz/swarm-build/out /var/lib/i30ltz/swarm-build/work /var/lib/i30ltz/swarm-build/vm
+install -d -o i30ltz -g i30ltz -m 0750 /home/i30ltz/SWARM_OS /home/i30ltz/SWARM_OS/30-source /home/i30ltz/SWARM_OS/50-i30ltz-cases
+
+# ── helpers on PATH ─────────────────────────────────────────────────────────
+for t in /opt/i30ltz/bin/*; do ln -sf "$t" "/usr/local/bin/$(basename "$t")"; done
+
+# ── locale ──────────────────────────────────────────────────────────────────
+sed -i 's/^# *en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen 2>/dev/null || true
+locale-gen en_US.UTF-8 >/dev/null 2>&1 || true
+
+# ── services ────────────────────────────────────────────────────────────────
+systemctl set-default graphical.target
+systemctl enable i30ltz-firstboot.service i30ltz-kiosk.service \
+  NetworkManager.service systemd-resolved.service systemd-timesyncd.service \
+  ufw.service apparmor.service unattended-upgrades.service \
+  fstrim.timer clamav-freshclam.service smartmontools.service 2>/dev/null || true
+systemctl enable fwupd-refresh.timer 2>/dev/null || true
+systemctl mask ssh.service ssh.socket 2>/dev/null || true
+
+# ── boot splash ─────────────────────────────────────────────────────────────
+if command -v plymouth-set-default-theme >/dev/null; then
+  plymouth-set-default-theme i30ltz || true
+else
+  ln -sf /usr/share/plymouth/themes/i30ltz/i30ltz.plymouth /etc/alternatives/default.plymouth
+fi
+
+echo "I30LTZ Recovery OS ${VERSION} (${BUILD_DATE}) configured."

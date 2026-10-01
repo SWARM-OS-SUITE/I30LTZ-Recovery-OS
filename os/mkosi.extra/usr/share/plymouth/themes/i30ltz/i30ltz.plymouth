@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=I30LTZ Recovery OS
+Description=I30LTZ Recovery OS boot splash v0.1.0 · 2026-10-01
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/i30ltz
+ScriptFile=/usr/share/plymouth/themes/i30ltz/i30ltz.script
