@@ -14,6 +14,8 @@ TTYVHangup=yes
 StandardInput=tty
 StandardOutput=tty
 ExecStartPre=-/usr/bin/plymouth quit
+ExecStartPre=-/usr/bin/setvtrgb -C /dev/tty1 /etc/i30ltz/vtrgb
+ExecStartPre=-/usr/bin/setfont -C /dev/tty1 /usr/share/consolefonts/Lat15-TerminusBold32x16.psf.gz
 ExecStart=/opt/i30ltz/bin/i30ltz-firstboot
 
 [Install]

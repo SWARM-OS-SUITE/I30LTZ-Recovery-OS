@@ -56,6 +56,9 @@ passwd -l i30ltz >/dev/null
 passwd -l root >/dev/null
 chmod 0750 /home/i30ltz
 
+# Ubuntu 24.04's login PAM still names pam_lastlog, which no longer ships.
+sed -i 's/^\(session\s\+optional\s\+pam_lastlog\.so.*\)$/# \1  # not shipped in 24.04/' /etc/pam.d/login
+
 # ── case store + SWARM_OS build area (group-private) ───────────────────────
 install -d -o root -g i30ltz -m 2770 /var/lib/i30ltz /var/lib/i30ltz/cases /var/log/i30ltz \
   /var/lib/i30ltz/swarm-build /var/lib/i30ltz/swarm-build/out /var/lib/i30ltz/swarm-build/work /var/lib/i30ltz/swarm-build/vm

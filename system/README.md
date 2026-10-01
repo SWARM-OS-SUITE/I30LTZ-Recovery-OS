@@ -5,9 +5,14 @@
 One PC (ThinkPad X13), two separate operating systems. See
 [`docs/SUITE_ARCHITECTURE.md`](../docs/SUITE_ARCHITECTURE.md).
 
+> **The real I30LTZ Recovery OS is the image built in [`../os/`](../os/README.md).**
+> This kit secures and equips the **Ubuntu USB build machine** that builds
+> that image and SWARM_OS. It doesn't turn Ubuntu into the OS.
+
 | Drive | OS | Kit |
 |---|---|---|
-| **External USB drive** | 🔴 I30LTZ Recovery OS (Ubuntu): repair, recovery, **builds SWARM_OS** | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) |
+| **Ubuntu USB (build machine)** | plain Ubuntu, secured; builds I30LTZ OS images + SWARM_OS | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) |
+| **boltz (external)** | 🔴 I30LTZ Recovery OS, its own image | built from [`../os/`](../os/README.md) |
 | **X13 internal NVMe** | 🟣 SWARM_OS (Arch) + LLcy | not in this repo: it's built *by* Recovery OS from the SWARM_OS repo |
 
 ```

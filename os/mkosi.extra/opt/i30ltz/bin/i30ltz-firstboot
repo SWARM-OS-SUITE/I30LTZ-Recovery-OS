@@ -8,18 +8,18 @@ set -uo pipefail
 export DIALOGRC=/etc/i30ltz/dialogrc TERM=linux
 # shellcheck source=/dev/null
 . /etc/i30ltz/release 2>/dev/null || true
-BT=" I30LTZ RECOVERY OS v${OS_VERSION:-?} · ${OS_BUILD_DATE:-?} · first-boot setup "
+BT=" I30LTZ RECOVERY OS  |  v${OS_VERSION:-?} - ${OS_BUILD_DATE:-?}  |  first-boot setup "
 
-dialog --backtitle "$BT" --title " 🩺 Welcome " --msgbox \
+dialog --backtitle "$BT" --title " Welcome " --msgbox \
 "Welcome to I30LTZ Recovery OS.\n\nDr. I30LTZ \"MAD IT\" needs three things:\n\n  1. a password for your account (i30ltz)\n  2. your timezone\n  3. Wi-Fi (optional)\n\nTakes about a minute." 15 60
 
 # 1 · password (required — sudo + admin actions use it)
 while true; do
   clear
-  printf '\n\033[1;31m  I30LTZ RECOVERY OS\033[0m · choose a password for user \033[1;33mi30ltz\033[0m\n'
-  printf '  (used for admin actions like imaging drives — write it down somewhere safe)\n\n'
+  printf '\n\033[1;31m  I30LTZ RECOVERY OS\033[0m - choose a password for user \033[1;33mi30ltz\033[0m\n'
+  printf '  (used for admin actions like imaging drives - write it down somewhere safe)\n\n'
   passwd i30ltz && break
-  printf '\n  Passwords did not match or were too weak — try again.\n'; sleep 2
+  printf '\n  Passwords did not match or were too weak - try again.\n'; sleep 2
 done
 
 # 2 · timezone
@@ -35,5 +35,5 @@ if dialog --backtitle "$BT" --title " Wi-Fi " --yesno "Connect to Wi-Fi now?\n\n
 fi
 
 mkdir -p /var/lib/i30ltz && date '+%F %T' > /var/lib/i30ltz/firstboot.done
-dialog --backtitle "$BT" --title " ✅ Ready " --msgbox "Setup done.\n\nDr. I30LTZ is starting…" 9 50
+dialog --backtitle "$BT" --title " Ready " --msgbox "Setup done.\n\nDr. I30LTZ is starting..." 9 50
 clear

@@ -8,7 +8,7 @@ echo "🔴 Recovery OS is running from: $root_disk   (DO NOT install SWARM_OS he
 echo
 field() { sed -n "s/.*$1=\"\([^\"]*\)\".*/\1/p" <<<"$2"; }
 printf '%-14s %-7s %-6s %-4s %s\n' DISK SIZE TRAN USB? MODEL
-lsblk -dpnP -o NAME,SIZE,TRAN,RM,MODEL | while IFS= read -r line; do
+lsblk -dpnP -e 7,11 -o NAME,SIZE,TRAN,RM,MODEL | while IFS= read -r line; do
   name=$(field NAME "$line"); size=$(field SIZE "$line"); tran=$(field TRAN "$line")
   rm=$(field RM "$line"); model=$(field MODEL "$line")
   tag=""; [[ "$tran" == nvme || "$name" == /dev/nvme* ]] && tag="  ← internal NVMe (SWARM_OS target)"

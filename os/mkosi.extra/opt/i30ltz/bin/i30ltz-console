@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # Dr. I30LTZ "MAD IT" console — the I30LTZ Recovery OS kiosk home screen
-# v0.1.0 · 2026-10-01 · runs full-screen (cage + foot) as user i30ltz
+# v0.1.0 · 2026-10-01 · runs full-screen on the tty1 text console as user i30ltz
 # Every risky action asks first. The internal NVMe is never written by this
 # menu: imaging READS from it and writes to the case store on this drive.
 # =============================================================================
@@ -9,9 +9,9 @@ set -uo pipefail
 export DIALOGRC=/etc/i30ltz/dialogrc
 # shellcheck source=/dev/null
 . /etc/i30ltz/release 2>/dev/null || true
-VER="v${OS_VERSION:-?} · ${OS_BUILD_DATE:-?}"
+VER="v${OS_VERSION:-?} - ${OS_BUILD_DATE:-?}"
 CASES=/var/lib/i30ltz/cases
-TITLE=" I30LTZ RECOVERY OS · Dr. I30LTZ \"MAD IT\" · ${VER} "
+TITLE=" I30LTZ RECOVERY OS  |  Dr. I30LTZ \"MAD IT\"  |  ${VER} "
 
 # foot hands the terminal its real size a moment after start — draw only after
 # that, or the menu is laid out for 80x24 and wiped by the resize.
@@ -27,7 +27,7 @@ for _ in $(seq 1 80); do
   prev=$sz; sleep 0.1
 done
 
-pause() { printf '\n\033[1;33m── press Enter to return to Dr. I30LTZ ──\033[0m'; read -r _; }
+pause() { printf '\n\033[1;33m-- press Enter to return to Dr. I30LTZ --\033[0m'; read -r _; }
 say()   { dialog --backtitle "$TITLE" --title " $1 " --msgbox "$2" 12 64; }
 ask()   { dialog --backtitle "$TITLE" --title " $1 " --yesno "$2" 12 64; }
 
@@ -41,7 +41,7 @@ pick_disk() {
     model=$(sed -n 's/.*MODEL="\([^"]*\)".*/\1/p' <<<"$line")
     [[ "$name" == /dev/zram* || "$name" == /dev/loop* ]] && continue
     items+=("$name" "${size} ${tran:-?} ${model:-}")
-  done < <(lsblk -dpnP -o NAME,SIZE,TRAN,MODEL)
+  done < <(lsblk -dpnP -e 7,11 -o NAME,SIZE,TRAN,MODEL)   # skip loop (7) + optical (11)
   ((${#items[@]})) || { say "$1" "No disks found."; return 1; }
   dialog --backtitle "$TITLE" --title " $1 " --menu "Choose a disk:" 18 72 10 "${items[@]}" 3>&1 1>&2 2>&3
 }
@@ -50,14 +50,14 @@ act_disks()  { clear; i30ltz-disks; pause; }
 
 act_health() {
   local d; d=$(pick_disk "Drive health (SMART)") || return
-  clear; echo "🩺 SMART health for $d"; echo
+  clear; echo "SMART health for $d"; echo
   sudo smartctl -H -A -i "$d" | less -R
 }
 
 act_writeblock() {
   local d mode; d=$(pick_disk "Write-blocker") || return
-  mode=$(dialog --backtitle "$TITLE" --title " Write-blocker · $d " --menu "Kernel-level read-only switch:" 14 60 3 \
-    on "🔒 make READ-ONLY (before recovery)" off "🔓 make read-write again" status "show current state" 3>&1 1>&2 2>&3) || return
+  mode=$(dialog --backtitle "$TITLE" --title " Write-blocker - $d " --menu "Kernel-level read-only switch:" 14 60 3 \
+    on "make READ-ONLY (before recovery)" off "make read-write again" status "show current state" 3>&1 1>&2 2>&3) || return
   clear; sudo i30ltz-writeblock "$mode" "$d"; pause
 }
 
@@ -77,7 +77,7 @@ act_image() {
   clear; mkdir -p "$dest"
   sudo i30ltz-writeblock on "$d" && \
   sudo ddrescue -d -r3 "$d" "$dest/image.img" "$dest/image.map"
-  echo; echo "📁 Case saved in $dest  (re-run the same case to resume)"; pause
+  echo; echo "Case saved in $dest  (re-run the same case to resume)"; pause
 }
 
 act_photorec() {
@@ -106,13 +106,13 @@ act_testiso() {
 }
 
 act_ai() {
-  say "Dr. I30LTZ · MAD IT (AI)" "The on-device AI arrives in v0.2:\n\n• MAD IT answers repair questions offline\n• Lucille (LLcy) is reached from this drive's boltz data\n\nTracked in docs/SUITE_ARCHITECTURE.md (path A)."
+  say "Dr. I30LTZ - MAD IT (AI)" "The on-device AI arrives in v0.2:\n\n - MAD IT answers repair questions offline\n - Lucille (LLcy) is reached from this drive's boltz data\n\nTracked in docs/SUITE_ARCHITECTURE.md (path A)."
 }
 
 act_network() { clear; nmtui; }
-act_shell()   { clear; echo "Admin shell — type 'exit' to return to Dr. I30LTZ."; bash -l; }
+act_shell()   { clear; echo "Admin shell - type 'exit' to return to Dr. I30LTZ."; bash -l; }
 act_about() {
-  say "About" "I30LTZ Recovery OS ${VER}\nUbuntu ${OS_BASE_RELEASE:-24.04} LTS base · external drive\n\nAssistant: Dr. I30LTZ \"MAD IT\"\nRoles: repair · data recovery · builds SWARM_OS\n\nSuite: SWARM_OS (internal NVMe) + LUCILLE \"LLcy\"\nImagined by I320K3-N-I30LTZ"
+  say "About" "I30LTZ Recovery OS ${VER}\nUbuntu ${OS_BASE_RELEASE:-24.04} LTS base - external drive\n\nAssistant: Dr. I30LTZ \"MAD IT\"\nRoles: repair, data recovery, builds SWARM_OS\n\nSuite: SWARM_OS (internal NVMe) + LUCILLE \"LLcy\"\nImagined by I320K3-N-I30LTZ"
 }
 act_power() {
   local c; c=$(dialog --backtitle "$TITLE" --title " Power " --menu "" 11 40 3 reboot "Restart" poweroff "Shut down" back "Back" 3>&1 1>&2 2>&3) || return
@@ -133,22 +133,25 @@ watch_resize() {
 }
 
 while true; do
+  # menu height: fit under the title bar on any screen (13 items need 22 rows)
+  rows=$(stty size 2>/dev/null | cut -d' ' -f1); rows=${rows:-25}
+  MH=$(( rows - 3 )); (( MH > 23 )) && MH=23; (( MH < 12 )) && MH=12
   watch_resize & watcher=$!
-  choice=$(dialog --backtitle "$TITLE" --title " 🩺 Dr. I30LTZ · what's wrong with the patient? " \
-    --cancel-label "Power" --menu "\n Arrow keys + Enter. Ctrl+Alt+F2 = text login.\n" 24 74 14 \
-    1  "🗺  Disk map — which drive is which" \
-    2  "🩺 Drive health (SMART)" \
-    3  "🔒 Write-blocker on / off" \
-    4  "💾 Image a failing drive → new case" \
-    5  "♻  Recover deleted files (PhotoRec)" \
-    6  "🧩 Repair partitions (TestDisk)" \
-    7  "🦠 Malware scan (ClamAV)" \
-    8  "🏗  Build SWARM_OS (Arch container)" \
-    9  "🧪 Test an ISO in a VM" \
-    10 "🤖 Dr. I30LTZ · MAD IT AI  (v0.2)" \
-    11 "📶 Wi-Fi / network" \
-    12 "⌨  Admin shell" \
-    13 "ℹ  About this OS" \
+  choice=$(dialog --backtitle "$TITLE" --title " Dr. I30LTZ - what's wrong with the patient? " \
+    --cancel-label "Power" --menu "\n Arrow keys + Enter.  Ctrl+Alt+F2 = text login.\n" "$MH" 72 "$((MH - 9))" \
+    1  "[MAP]   Disk map - which drive is which" \
+    2  "[SMART] Drive health (SMART)" \
+    3  "[LOCK]  Write-blocker on / off" \
+    4  "[IMAGE] Image a failing drive -> new case" \
+    5  "[UNDEL] Recover deleted files (PhotoRec)" \
+    6  "[FIX]   Repair partitions (TestDisk)" \
+    7  "[SCAN]  Malware scan (ClamAV)" \
+    8  "[BUILD] Build SWARM_OS (Arch container)" \
+    9  "[TEST]  Test an ISO in a VM" \
+    10 "[AI]    Dr. I30LTZ - MAD IT AI (v0.2)" \
+    11 "[NET]   Wi-Fi / network" \
+    12 "[SHELL] Admin shell" \
+    13 "[ABOUT] About this OS" \
     3>&1 1>&2 2>&3); rc=$?
   kill "$watcher" 2>/dev/null; wait "$watcher" 2>/dev/null
   case $rc in

@@ -1,6 +1,6 @@
 # SWARM_OS Suite: architecture
 
-**v1.2.0 · 2026-10-01** · the source of truth for which OS is which.
+**v1.3.0 · 2026-10-01** · the source of truth for which OS is which.
 If another file disagrees with this one, this one wins. Fix the other file.
 
 ## One PC, two operating systems
@@ -15,7 +15,7 @@ operating systems**:
 | **AI assistant** | **LUCILLE CORE AI "LLcy"** | **Dr. I30LTZ "MAD IT"**, plus access to **Lucille** |
 | **Job** | Daily life, gaming, coding | Repair, data recovery, and **building SWARM_OS** |
 | **Repo** | SWARM_OS / Lucille repo | **this repo** (`i30ltz-recovery`) |
-| **Setup kit** | lives in the SWARM_OS repo | [`system/i30ltz-recovery-first-boot/`](../system/i30ltz-recovery-first-boot/README.md) |
+| **Built from** | the SWARM_OS repo (archiso) | [`os/`](../os/README.md): its own image (mkosi), v0.1.0 |
 
 Rules:
 1. **Never mix them.** SWARM_OS never gets Recovery OS packages or identity,
@@ -29,10 +29,13 @@ Rules:
    from what it builds, so a bad build can never strand you. This is the
    plan from the 2026-09-18 tracker entry.
 
-There is no third "dev workstation". The external Ubuntu already in use
-(since 2026-09-30) **becomes** Recovery OS. Its v1 leftovers are cleaned
-with `migrate-to-v2.1.sh`, and then the kit runs on it. No second install
-is needed.
+There is no third "dev workstation". **I30LTZ Recovery OS is its own OS
+image** built from [`os/`](../os/README.md). It has its own name, boot menu,
+splash, first-boot wizard and Dr. I30LTZ console, and it's installed onto
+boltz next to the data partition. The plain Ubuntu USB in use since
+2026-09-30 (set up with the `system/` kit) is the **build machine** that
+makes the image. Once boltz runs the real OS, it can build its own next
+versions.
 
 ```mermaid
 flowchart LR
@@ -112,9 +115,12 @@ two ways:
 
 | Item | State |
 |---|---|
-| Recovery OS first-boot kit (Ubuntu) + SWARM_OS builder | ✅ built · v2.1.0 (not yet run on hardware) |
-| External Ubuntu → Recovery OS | 🔄 next: `migrate-to-v2.1.sh`, then `first-boot.sh` |
-| Portable Lucille (A) | ⏳ planned: `lucille-portable` module reading the boltz data |
+| **I30LTZ Recovery OS image** (`os/`, mkosi, Ubuntu 24.04 base) | ✅ v0.1.0 builds; boots in a UEFI VM to the first-boot wizard and Dr. I30LTZ console |
+| `install-to-drive.sh` (adds the OS beside existing partitions) | ✅ tested: data partition byte-for-byte unchanged |
+| Install onto boltz + first real boot on the X13 | 🔄 next (Secure Boot off for v0.1) |
+| Ubuntu USB build machine (`system/` kit v2.1.0) | ✅ 23/23 verified on the X13 |
+| Secure Boot (signed shim + enrolled key) | ⏳ v0.2 |
+| Dr. I30LTZ MAD IT AI + portable Lucille (A) | ⏳ v0.2: reads the boltz data partition |
 | Read-only SWARM_OS mount for Lucille data (B) | ⏳ planned |
-| `native/` Rust app retarget, Debian 12 → Ubuntu LTS | ⚠️ to do |
+| Native Slint graphical shell (`native/`) | ⏳ later; retarget Debian 12 → Ubuntu 24.04 |
 | SWARM_OS itself (archiso profile, Lucille services) | lives in the SWARM_OS repo |
