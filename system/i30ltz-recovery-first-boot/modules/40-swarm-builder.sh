@@ -6,7 +6,7 @@
 # NVMe. A broken SWARM_OS build can never strand you, because the builder
 # lives on a different drive. Nothing here ever writes to the internal disk.
 
-apt_install podman qemu-system-x86 qemu-utils ovmf git python3
+apt_install podman qemu-system-x86 qemu-utils ovmf git python3 mtools gdisk efibootmgr   # mtools/gdisk/efibootmgr: os/ installers
 [[ -n "$TARGET_USER" ]] && getent group kvm >/dev/null && run usermod -aG kvm "$TARGET_USER"
 
 run install -d -o root -g i30ltz -m 2770 /var/lib/i30ltz/swarm-build \
