@@ -74,7 +74,7 @@ swarm-build ~/SWARM_OS/30-source/swarm-os/<profile>     # Arch container → ISO
 swarm-test-iso /var/lib/i30ltz/swarm-build/out/<iso>    # UEFI VM, real disks NOT attached
 ```
 - `swarm-build` runs `mkarchiso` inside an `archlinux` container (podman).
-  Builds only touch `/var/lib/i30ltz/swarm-build/` on boltz, and every ISO
+  Builds only touch `/var/lib/i30ltz/swarm-build/` on the Recovery OS drive, and every ISO
   gets a `.sha256` file.
 - `swarm-test-iso` boots the ISO in a QEMU UEFI VM with a throwaway virtual disk.
 - **Installing to the NVMe is always a manual, deliberate step** using the
@@ -97,7 +97,7 @@ two ways:
 
 ### B. Your real Lucille data from the NVMe (read-only)
 - Recovery OS can unlock (LUKS) and mount SWARM_OS **read-only**, so Lucille
-  can read your real memory and notes. Anything it writes goes to boltz.
+  can read your real memory and notes. Anything it writes goes to the external drive.
 - Skip this if the NVMe is failing. Image it first
   (`i30ltz-writeblock on` + `ddrescue`) and use the image instead.
 

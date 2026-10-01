@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034  # KIT_* settings are read by common/runner.sh
 # =============================================================================
-# I30LTZ Recovery OS — First Boot (secure setup, Ubuntu LTS base, external "boltz" drive)
+# I30LTZ Recovery OS — First Boot (secure setup, Ubuntu LTS base, external USB drive)
 # Version: 2.1.0 | Date: 2026-10-01
 # Assistant: Dr. I30LTZ "MAD IT" — PC repair + data recovery + SWARM_OS builder
 #

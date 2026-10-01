@@ -1,13 +1,13 @@
 # I30LTZ Recovery OS: first boot
 
-**v2.1.0 · 2026-10-01** · Ubuntu 24.04 / 26.04 LTS · external drive **boltz** ·
+**v2.1.0 · 2026-10-01** · Ubuntu 24.04 / 26.04 LTS · **external USB drive** ·
 assistant **Dr. I30LTZ "MAD IT"** + access to Lucille · **builds SWARM_OS**
 
 Run this on the **external Ubuntu drive** that is Recovery OS. That can be
 the Ubuntu you already boot from USB or a fresh install. Never run it on
 SWARM_OS (the X13's internal NVMe). See
 [`docs/SUITE_ARCHITECTURE.md`](../../docs/SUITE_ARCHITECTURE.md) for the
-boltz layout and how to install without wiping the data partition.
+boltz data rules and how Lucille is reached from here.
 
 ## Run it
 
@@ -15,8 +15,8 @@ boltz layout and how to install without wiping the data partition.
 sudo apt install -y git
 git clone https://github.com/cledford955-maker/i30ltz-recovery.git ~/SWARM_OS/30-source/i30ltz-recovery
 cd ~/SWARM_OS/30-source/i30ltz-recovery/system/i30ltz-recovery-first-boot
-sudo bash first-boot.sh --dry-run --user YOURNAME     # preview, changes nothing
-sudo bash first-boot.sh --user YOURNAME               # apply (asks y/N once)
+sudo bash first-boot.sh --dry-run --user "$USER"      # preview, changes nothing
+sudo bash first-boot.sh --user "$USER"                # apply (asks y/N once)
 sudo bash verify.sh                                   # read-only checks, then reboot
 ```
 The repo is private, so cloning asks you to sign in. `gh auth login` is the easiest way.
