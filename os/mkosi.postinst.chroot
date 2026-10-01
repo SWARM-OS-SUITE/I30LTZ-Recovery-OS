@@ -79,7 +79,8 @@ systemctl mask ssh.service ssh.socket 2>/dev/null || true
 # NetworkManager owns networking (Wi-Fi via nmtui); no second network stack.
 systemctl disable systemd-networkd.service systemd-networkd.socket systemd-networkd-wait-online.service 2>/dev/null || true
 # Not used: A/B sysupdate isn't configured yet; no ad-style MOTD news.
-systemctl disable systemd-sysupdate.timer systemd-sysupdate-reboot.timer motd-news.timer 2>/dev/null || true
+systemctl mask systemd-sysupdate.timer systemd-sysupdate-reboot.timer 2>/dev/null || true
+systemctl disable motd-news.timer 2>/dev/null || true
 
 # ── boot splash ─────────────────────────────────────────────────────────────
 if command -v plymouth-set-default-theme >/dev/null; then
