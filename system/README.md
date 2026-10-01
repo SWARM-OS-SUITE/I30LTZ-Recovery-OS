@@ -7,7 +7,7 @@ One PC (ThinkPad X13), two separate operating systems. See
 
 | Drive | OS | Kit |
 |---|---|---|
-| **External "boltz"** | 🔴 I30LTZ Recovery OS (Ubuntu): repair, recovery, **builds SWARM_OS** | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) |
+| **External USB drive** | 🔴 I30LTZ Recovery OS (Ubuntu): repair, recovery, **builds SWARM_OS** | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) |
 | **X13 internal NVMe** | 🟣 SWARM_OS (Arch) + LLcy | not in this repo: it's built *by* Recovery OS from the SWARM_OS repo |
 
 ```
@@ -18,7 +18,7 @@ system/
 │   ├── lib/common.sh                # logging, dry-run, safe writes, backups
 │   └── modules/                     # 00-preflight 10-update 20-harden 30-performance 90-report
 └── i30ltz-recovery-first-boot/
-    ├── first-boot.sh  verify.sh  README.md
+    ├── first-boot.sh  verify.sh  migrate-to-v2.1.sh  README.md
     └── modules/                     # 40-swarm-builder 50-recovery-mad-it 60-layout
 ```
 

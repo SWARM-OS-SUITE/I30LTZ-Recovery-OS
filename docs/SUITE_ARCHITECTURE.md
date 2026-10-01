@@ -1,6 +1,6 @@
 # SWARM_OS Suite: architecture
 
-**v1.1.0 · 2026-10-01** · the source of truth for which OS is which.
+**v1.2.0 · 2026-10-01** · the source of truth for which OS is which.
 If another file disagrees with this one, this one wins. Fix the other file.
 
 ## One PC, two operating systems
@@ -11,7 +11,7 @@ operating systems**:
 | | 🟣 **SWARM_OS** | 🔴 **I30LTZ Recovery OS** |
 |---|---|---|
 | **Base** | **Arch Linux** (built with archiso) | **Ubuntu LTS** (its own separate install) |
-| **Lives on** | X13 **internal NVMe** | **External drive "boltz"** (boots from USB) |
+| **Lives on** | X13 **internal NVMe** | **External USB drive** (the Ubuntu you boot from USB today) |
 | **AI assistant** | **LUCILLE CORE AI "LLcy"** | **Dr. I30LTZ "MAD IT"**, plus access to **Lucille** |
 | **Job** | Daily life, gaming, coding | Repair, data recovery, and **building SWARM_OS** |
 | **Repo** | SWARM_OS / Lucille repo | **this repo** (`i30ltz-recovery`) |
@@ -20,17 +20,19 @@ operating systems**:
 Rules:
 1. **Never mix them.** SWARM_OS never gets Recovery OS packages or identity,
    and Recovery OS never gets SWARM_OS identity.
-2. **Recovery OS stays on boltz**, never on the internal NVMe. That way it
+2. **Recovery OS stays on the external drive**, never on the internal NVMe. That way it
    still works when SWARM_OS, the NVMe, or the bootloader is broken.
 3. **Only one OS runs at a time.** You pick one at boot: the internal drive
-   means SWARM_OS, and boltz means Recovery OS (press **F12** on the X13 for the
-   boot menu).
+   means SWARM_OS, and the external USB drive means Recovery OS (press **F12**
+   on the X13 for the boot menu).
 4. **Recovery OS builds SWARM_OS.** The builder lives on a different drive
    from what it builds, so a bad build can never strand you. This is the
    plan from the 2026-09-18 tracker entry.
 
-There is no third "dev workstation". The Ubuntu install in use on
-2026-09-30/10-01 is **temporary**. Once boltz Recovery OS works, it retires.
+There is no third "dev workstation". The external Ubuntu already in use
+(since 2026-09-30) **becomes** Recovery OS. Its v1 leftovers are cleaned
+with `migrate-to-v2.1.sh`, and then the kit runs on it. No second install
+is needed.
 
 ```mermaid
 flowchart LR
@@ -41,12 +43,12 @@ flowchart LR
       SW --- LU
     end
   end
-  subgraph BOLTZ["🔌 External drive: boltz"]
+  subgraph BOLTZ["🔌 External USB drive"]
     RO["🔴 I30LTZ Recovery OS · Ubuntu"]
     MAD["🩺 Dr. I30LTZ 'MAD IT'"]
     BLD["🏗️ SWARM_OS builder<br/>Arch container → mkarchiso"]
     VM["🧪 QEMU test boot"]
-    DATA["🗄️ boltz data partition<br/>Lucille-AI + I30LTZ copies"]
+    DATA["🗄️ boltz data<br/>Lucille-AI + I30LTZ copies"]
     RO --- MAD
     RO --- BLD --> VM
     RO --- DATA
@@ -57,22 +59,12 @@ flowchart LR
   MAD <-- "LUCY_URL=127.0.0.1:5000" --> DATA
 ```
 
-## The boltz drive layout
+## The boltz data
 
-```
-boltz (external)
-├── EFI partition            ← Recovery OS bootloader
-├── Recovery OS root         ← Ubuntu LTS + I30LTZ kit (fresh install)
-└── boltz data partition     ← EXISTING: /mnt/boltz (Lucille-AI, I30LTZ-Recovery copies)
-                               KEEP IT. The Ubuntu installer must not format it.
-```
-
-When you install Ubuntu onto boltz:
-1. **Back up the data partition first**, for example to a second USB stick.
-2. In the installer, choose **manual partitioning** ("Something else"). Never
-   choose "Erase disk", because that would wipe the data partition.
-3. Pick **boltz**, not the X13's NVMe. Check names and sizes twice.
-4. Put the bootloader on **boltz** too, so the X13's internal disk is never touched.
+`/mnt/boltz` holds your Lucille-AI and I30LTZ-Recovery copies. Recovery OS
+mounts it for portable Lucille (path A below). **Never format it.** If you
+ever reinstall Recovery OS onto the drive that holds it, back it up first,
+use manual partitioning ("Something else"), and leave that partition alone.
 
 ## Building SWARM_OS from Recovery OS
 
@@ -120,10 +112,9 @@ two ways:
 
 | Item | State |
 |---|---|
-| Recovery OS first-boot kit (Ubuntu) + SWARM_OS builder | ✅ built · v2.1.0 (not yet run on boltz) |
-| boltz Recovery OS install | 🔄 **in progress** (fresh Ubuntu install by you) |
-| Temporary Ubuntu in use now | ⏳ retire once boltz works |
-| Portable Lucille (A) | ⏳ planned: `lucille-portable` module reading the boltz data partition |
+| Recovery OS first-boot kit (Ubuntu) + SWARM_OS builder | ✅ built · v2.1.0 (not yet run on hardware) |
+| External Ubuntu → Recovery OS | 🔄 next: `migrate-to-v2.1.sh`, then `first-boot.sh` |
+| Portable Lucille (A) | ⏳ planned: `lucille-portable` module reading the boltz data |
 | Read-only SWARM_OS mount for Lucille data (B) | ⏳ planned |
 | `native/` Rust app retarget, Debian 12 → Ubuntu LTS | ⚠️ to do |
 | SWARM_OS itself (archiso profile, Lucille services) | lives in the SWARM_OS repo |

@@ -3,8 +3,9 @@
 **v2.1.0 · 2026-10-01** · Ubuntu 24.04 / 26.04 LTS · external drive **boltz** ·
 assistant **Dr. I30LTZ "MAD IT"** + access to Lucille · **builds SWARM_OS**
 
-Run this on the **fresh Ubuntu install on boltz**. Never run it on SWARM_OS
-(the X13's internal NVMe). See
+Run this on the **external Ubuntu drive** that is Recovery OS. That can be
+the Ubuntu you already boot from USB or a fresh install. Never run it on
+SWARM_OS (the X13's internal NVMe). See
 [`docs/SUITE_ARCHITECTURE.md`](../../docs/SUITE_ARCHITECTURE.md) for the
 boltz layout and how to install without wiping the data partition.
 
@@ -19,6 +20,17 @@ sudo bash first-boot.sh --user YOURNAME               # apply (asks y/N once)
 sudo bash verify.sh                                   # read-only checks, then reboot
 ```
 The repo is private, so cloning asks you to sign in. `gh auth login` is the easiest way.
+
+### Already ran an older kit on this Ubuntu? Clean up first
+
+If this Ubuntu ran kit v1.0.0 (`--profile both`) or v2.0.0 (dev
+workstation), remove the leftover SWARM_OS labels before running the kit:
+```bash
+sudo bash migrate-to-v2.1.sh --dry-run    # preview
+sudo bash migrate-to-v2.1.sh              # renames configs, removes fake labels, backs up everything
+```
+It keeps every setting, tool, Flatpak app (GeForce NOW) and your
+`~/SWARM_OS` folders.
 
 ## What it does
 
