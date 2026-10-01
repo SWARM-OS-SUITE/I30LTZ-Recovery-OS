@@ -1,11 +1,15 @@
 # shellcheck shell=bash
-# about: integrated-graphics drivers, Vulkan, video decode, zram (+ gaming tuning on the workstation)
-# Ubuntu first-boot shared module v2.0.0 · 2026-09-30
+# about: integrated-graphics drivers, Vulkan, video decode, zram (+ optional gaming tuning)
+# Ubuntu first-boot shared module v2.1.0 · 2026-10-01
 
 # ── Graphics stack (Mesa = best open driver for Intel/AMD iGPUs) ───────────
 apt_install mesa-utils mesa-vulkan-drivers vulkan-tools libgl1-mesa-dri
 case "${GPU_VENDOR:-unknown}" in
-  intel) apt_optional intel-media-va-driver-non-free intel-gpu-tools vainfo ;;
+  intel)
+    # non-free (multiverse) decodes more codecs; free (universe) is the fallback
+    if pkg_available intel-media-va-driver-non-free; then apt_optional intel-media-va-driver-non-free
+    else apt_optional intel-media-va-driver; fi
+    apt_optional intel-gpu-tools vainfo ;;
   amd)   apt_optional mesa-va-drivers radeontop vainfo ;;
   *)     apt_optional mesa-va-drivers vainfo ;;
 esac

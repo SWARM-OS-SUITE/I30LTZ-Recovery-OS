@@ -1,12 +1,13 @@
 # shellcheck shell=bash
 # about: organized, numbered home folders — each OS project kept separate
-# SWARM_OS Suite dev workstation v2.0.0 · 2026-09-30
+# I30LTZ Recovery OS first boot v2.1.0 · 2026-10-01
+
+[[ -n "$TARGET_HOME" ]] || { info "no --user given — home layout skipped"; return 0; }
 
 base="$TARGET_HOME/SWARM_OS"
 dirs=(
   "00-inbox"                    # drop zone — sort later
   "10-releases"                 # ISOs, builds, dated + versioned
-  "20-games"                    # saves, mods, MangoHud configs
   "30-source"                   # git repos: swarm-os + i30ltz-recovery, side by side, never mixed
   "40-lucille-llcy"             # SWARM_OS project: LLcy notes, prompts, memory exports
   "50-i30ltz-cases"             # I30LTZ Recovery OS project: MAD IT notes + test cases
@@ -20,17 +21,17 @@ for d in "${dirs[@]}"; do
 done
 
 write_file "$base/README.md" 0644 <<EOM
-# SWARM_OS Suite — dev workstation home layout
-v2.0.0 · 2026-09-30 · created by the dev-workstation first-boot kit
+# SWARM_OS Suite — home layout on I30LTZ Recovery OS
+v2.1.0 · 2026-10-01 · created by the I30LTZ Recovery OS first-boot kit
 
-This laptop builds two separate operating systems. Keep their work apart:
-**SWARM_OS** (LLcy) in 40-, **I30LTZ Recovery OS** (MAD IT) in 50-.
+Recovery OS repairs this PC **and** builds SWARM_OS for the internal NVMe.
+Keep the two projects apart: **SWARM_OS** (LLcy) in 40-, **I30LTZ** (MAD IT) in 50-.
+Build SWARM_OS from 30-source/swarm-os with \`swarm-build\`, test with \`swarm-test-iso\`.
 
 | Folder | What goes here |
 |---|---|
 | 00-inbox | anything new; sort weekly |
 | 10-releases | builds and ISOs, name them \`thing_vX.Y.Z_YYYY-MM-DD\` |
-| 20-games | saves, mods, overlays |
 | 30-source | git repos, one folder per OS |
 | 40-lucille-llcy | SWARM_OS · LLcy prompts, notes, memory |
 | 50-i30ltz-cases | I30LTZ Recovery OS · MAD IT notes (evidence stays in /var/lib/i30ltz/cases) |

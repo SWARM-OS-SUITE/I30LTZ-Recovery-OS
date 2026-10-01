@@ -1,32 +1,27 @@
-# system/: first-boot kits
+# system/: first-boot kit
 
-**v2.0.0 · 2026-09-30**
+**v2.1.0 · 2026-10-01**
 
-SWARM_OS (Arch, internal) and I30LTZ Recovery OS (Ubuntu, external) are **two
-separate operating systems** (see [`docs/SUITE_ARCHITECTURE.md`](../docs/SUITE_ARCHITECTURE.md)), so
-each machine gets its own kit. Never run two kits on the same machine.
+One PC (ThinkPad X13), two separate operating systems. See
+[`docs/SUITE_ARCHITECTURE.md`](../docs/SUITE_ARCHITECTURE.md).
 
-| Machine | Kit | Assistant |
+| Drive | OS | Kit |
 |---|---|---|
-| The **external** drive that **is** I30LTZ Recovery OS (Ubuntu base) | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) | Dr. I30LTZ "MAD IT" |
-| Your **dev workstation**, the Ubuntu laptop that builds both OSes | [`dev-workstation-first-boot/`](dev-workstation-first-boot/README.md) | none (it's neither OS) |
-| The **internal** drive that **is** SWARM_OS (Arch/archiso) | not in this repo: it belongs in the SWARM_OS / Lucille repo | LUCILLE CORE AI "LLcy" |
+| **External "boltz"** | 🔴 I30LTZ Recovery OS (Ubuntu): repair, recovery, **builds SWARM_OS** | [`i30ltz-recovery-first-boot/`](i30ltz-recovery-first-boot/README.md) |
+| **X13 internal NVMe** | 🟣 SWARM_OS (Arch) + LLcy | not in this repo: it's built *by* Recovery OS from the SWARM_OS repo |
 
 ```
 system/
 ├── README.md                        # this map
-├── common/                          # shared by both kits (never run directly)
+├── common/                          # shared plumbing (never run directly)
 │   ├── runner.sh                    # flags, banner, module loop, summary
 │   ├── lib/common.sh                # logging, dry-run, safe writes, backups
 │   └── modules/                     # 00-preflight 10-update 20-harden 30-performance 90-report
-├── i30ltz-recovery-first-boot/      # I30LTZ Recovery OS
-│   ├── first-boot.sh  verify.sh  README.md
-│   └── modules/50-recovery-mad-it.sh
-└── dev-workstation-first-boot/      # the laptop that builds both OSes
-    ├── first-boot.sh  verify.sh  migrate-from-v1.sh  README.md
-    └── modules/40-dev-toolchain.sh  50-recovery-test-bench.sh  60-layout.sh
+└── i30ltz-recovery-first-boot/
+    ├── first-boot.sh  verify.sh  README.md
+    └── modules/                     # 40-swarm-builder 50-recovery-mad-it 60-layout
 ```
 
-v1.0.0 (`system/ubuntu-first-boot/`, `--profile both`) mixed the two OSes on
-one machine. It was replaced by these kits. If you ran v1, see
-`dev-workstation-first-boot/README.md`, section "Upgrading from v1.0.0".
+History: v1.0.0 mixed both OSes on one install. v2.0.0 added a separate
+"dev workstation" kit. v2.1.0 retires that kit, because there's only one PC
+and Recovery OS is the SWARM_OS builder.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # I30LTZ Recovery OS — First Boot · verify (read-only, changes nothing)
-# Version: 2.0.0 | Date: 2026-09-30
+# Version: 2.1.0 | Date: 2026-10-01
 #   sudo bash verify.sh
 # =============================================================================
 set -uo pipefail
@@ -16,7 +16,7 @@ check() {  # check "label" command...
   else printf '%s[ MISS ]%s %s\n' "$C_RED" "$C_NC" "$label"; ((fail++)); fi
 }
 
-printf '%s%sI30LTZ Recovery OS verify v2.0.0 · 2026-09-30%s\n' "$C_RED" "$C_BOLD" "$C_NC"
+printf '%s%sI30LTZ Recovery OS verify v2.1.0 · 2026-10-01%s\n' "$C_RED" "$C_BOLD" "$C_NC"
 
 step "Security"
 check "firewall active, deny incoming"   bash -c "ufw status verbose | grep -q 'Status: active' && ufw status verbose | grep -q 'deny (incoming)'"
@@ -40,5 +40,16 @@ check "testdisk + photorec"              bash -c 'command -v testdisk && command
 check "SMART tools"                      command -v smartctl
 check "write-blocker helper"             command -v i30ltz-writeblock
 
+step "SWARM_OS builder"
+check "podman (Arch build container)"   command -v podman
+check "QEMU for ISO test boots"          command -v qemu-system-x86_64
+check "UEFI firmware (OVMF)"             bash -c 'ls /usr/share/OVMF/OVMF_CODE*.fd'
+check "swarm-build helper"               command -v swarm-build
+check "swarm-test-iso helper"            command -v swarm-test-iso
+check "i30ltz-disks helper"              command -v i30ltz-disks
+
+step "Not pretending to be SWARM_OS"
+check "no SWARM_OS identity here"        test ! -e /etc/swarm_os/release
+
 printf '\n%s%d passed%s · %s%d missing%s\n' "$C_GREEN" "$pass" "$C_NC" "$C_RED" "$fail" "$C_NC"
-((fail == 0)) || echo "Re-run the matching module:  sudo bash first-boot.sh --only 50-recovery-mad-it"
+((fail == 0)) || echo "Re-run a module, e.g.:  sudo bash first-boot.sh --user YOURNAME --only 40-swarm-builder"

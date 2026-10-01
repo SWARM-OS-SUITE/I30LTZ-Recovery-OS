@@ -1,7 +1,6 @@
 # shellcheck shell=bash
 # about: I30LTZ Recovery · Dr. I30LTZ "MAD IT" — repair + data-recovery toolkit
-# I30LTZ Recovery OS first boot v2.0.0 · 2026-09-30
-# Also reused by the dev-workstation kit as a test bench (WRITE_OS_IDENTITY=0).
+# I30LTZ Recovery OS first boot v2.1.0 · 2026-10-01
 
 # ── Disk health + imaging + carving ────────────────────────────────────────
 apt_install smartmontools nvme-cli hdparm gddrescue testdisk \
@@ -47,14 +46,14 @@ esac
 SH
 run ln -sf /opt/i30ltz/bin/i30ltz-writeblock /usr/local/bin/i30ltz-writeblock
 
-# Machine identity — only on a real I30LTZ Recovery OS install
-if [[ "${WRITE_OS_IDENTITY:-1}" == 1 ]]; then
-  write_file /etc/i30ltz/release 0644 <<'CFG'
+write_file /etc/i30ltz/release 0644 <<'CFG'
 # I30LTZ Recovery OS — machine identity
 OS="I30LTZ Recovery OS"
+BASE="Ubuntu LTS"
+LIVES_ON="external drive (boltz)"
 ASSISTANT="Dr. I30LTZ (MAD IT)"
-FIRST_BOOT_KIT="2.0.0"
-FIRST_BOOT_DATE="2026-09-30"
+ROLES="repair, data recovery, SWARM_OS builder"
+FIRST_BOOT_KIT="2.1.0"
+FIRST_BOOT_DATE="2026-10-01"
 CFG
-fi
 ok "MAD IT toolkit ready: /opt/i30ltz, cases in /var/lib/i30ltz/cases (group: i30ltz)"
