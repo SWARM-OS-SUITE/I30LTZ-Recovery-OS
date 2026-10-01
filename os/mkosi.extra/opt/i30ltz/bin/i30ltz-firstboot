@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# =============================================================================
+# I30LTZ Recovery OS — first-boot setup (runs once, as root, on tty1)
+# v0.1.0 · 2026-10-01 · sets the i30ltz password, timezone and Wi-Fi
+# No password ships inside the image: you choose it here.
+# =============================================================================
+set -uo pipefail
+export DIALOGRC=/etc/i30ltz/dialogrc TERM=linux
+# shellcheck source=/dev/null
+. /etc/i30ltz/release 2>/dev/null || true
+BT=" I30LTZ RECOVERY OS v${OS_VERSION:-?} · ${OS_BUILD_DATE:-?} · first-boot setup "
+
+dialog --backtitle "$BT" --title " 🩺 Welcome " --msgbox \
+"Welcome to I30LTZ Recovery OS.\n\nDr. I30LTZ \"MAD IT\" needs three things:\n\n  1. a password for your account (i30ltz)\n  2. your timezone\n  3. Wi-Fi (optional)\n\nTakes about a minute." 15 60
+
+# 1 · password (required — sudo + admin actions use it)
+while true; do
+  clear
+  printf '\n\033[1;31m  I30LTZ RECOVERY OS\033[0m · choose a password for user \033[1;33mi30ltz\033[0m\n'
+  printf '  (used for admin actions like imaging drives — write it down somewhere safe)\n\n'
+  passwd i30ltz && break
+  printf '\n  Passwords did not match or were too weak — try again.\n'; sleep 2
+done
+
+# 2 · timezone
+tz=$(dialog --backtitle "$BT" --title " Timezone " --menu "Where are you?" 18 60 9 \
+  America/New_York "Eastern (US)" America/Chicago "Central (US)" America/Denver "Mountain (US)" \
+  America/Phoenix "Arizona (US)" America/Los_Angeles "Pacific (US)" America/Anchorage "Alaska (US)" \
+  Pacific/Honolulu "Hawaii (US)" Europe/London "UK" UTC "UTC" 3>&1 1>&2 2>&3) || tz=UTC
+timedatectl set-timezone "$tz" 2>/dev/null || ln -sf "/usr/share/zoneinfo/$tz" /etc/localtime
+
+# 3 · Wi-Fi (optional)
+if dialog --backtitle "$BT" --title " Wi-Fi " --yesno "Connect to Wi-Fi now?\n\n(Security updates and virus definitions need internet.)" 10 60; then
+  nmtui-connect
+fi
+
+mkdir -p /var/lib/i30ltz && date '+%F %T' > /var/lib/i30ltz/firstboot.done
+dialog --backtitle "$BT" --title " ✅ Ready " --msgbox "Setup done.\n\nDr. I30LTZ is starting…" 9 50
+clear
