@@ -6,7 +6,7 @@
 # services, firewall, boot splash. $IMAGE_VERSION comes from mkosi.version.
 # =============================================================================
 set -euo pipefail
-VERSION="${IMAGE_VERSION:-0.0.0}"
+OS_VERSION="${IMAGE_VERSION:-0.0.0}"
 BUILD_DATE="$(date -u +%F)"
 
 # ── identity: this is I30LTZ Recovery OS, built on Ubuntu ──────────────────
@@ -14,19 +14,21 @@ BUILD_DATE="$(date -u +%F)"
 if ! dpkg-divert --list /usr/lib/os-release | grep -q os-release; then
   dpkg-divert --local --rename --divert /usr/lib/os-release.ubuntu --add /usr/lib/os-release
 fi
-. /usr/lib/os-release.ubuntu
+# read Ubuntu's values without clobbering ours
+UB_VERSION_ID=$(. /usr/lib/os-release.ubuntu; echo "$VERSION_ID")
+UB_CODENAME=$(. /usr/lib/os-release.ubuntu; echo "$VERSION_CODENAME")
 cat > /usr/lib/os-release <<OSR
 NAME="I30LTZ Recovery OS"
-PRETTY_NAME="I30LTZ Recovery OS ${VERSION} (${BUILD_DATE})"
+PRETTY_NAME="I30LTZ Recovery OS ${OS_VERSION} (${BUILD_DATE})"
 ID=i30ltz
 ID_LIKE="ubuntu debian"
-VERSION="${VERSION} (${BUILD_DATE})"
-VERSION_ID="${VERSION}"
-VERSION_CODENAME=${VERSION_CODENAME}
-UBUNTU_CODENAME=${UBUNTU_CODENAME:-$VERSION_CODENAME}
+VERSION="${OS_VERSION} (${BUILD_DATE}, Ubuntu ${UB_VERSION_ID} base)"
+VERSION_ID="${OS_VERSION}"
+VERSION_CODENAME=${UB_CODENAME}
+UBUNTU_CODENAME=${UB_CODENAME}
 BUILD_ID="${BUILD_DATE}"
 IMAGE_ID=i30ltz-recovery-os
-IMAGE_VERSION="${VERSION}"
+IMAGE_VERSION="${OS_VERSION}"
 ANSI_COLOR="1;31"
 HOME_URL="https://github.com/cledford955-maker/i30ltz-recovery"
 OSR
@@ -36,10 +38,10 @@ install -d -m 0755 /etc/i30ltz
 cat > /etc/i30ltz/release <<REL
 # I30LTZ Recovery OS — machine identity
 OS="I30LTZ Recovery OS"
-OS_VERSION="${VERSION}"
+OS_VERSION="${OS_VERSION}"
 OS_BUILD_DATE="${BUILD_DATE}"
-OS_BASE="Ubuntu ${VERSION_ID} LTS"
-OS_BASE_RELEASE="${VERSION_ID}"
+OS_BASE="Ubuntu ${UB_VERSION_ID}"
+OS_BASE_RELEASE="${UB_VERSION_ID}"
 LIVES_ON="external drive"
 ASSISTANT="Dr. I30LTZ (MAD IT)"
 ROLES="repair, data recovery, SWARM_OS builder"
@@ -74,6 +76,10 @@ systemctl enable i30ltz-firstboot.service i30ltz-kiosk.service \
   fstrim.timer clamav-freshclam.service smartmontools.service 2>/dev/null || true
 systemctl enable fwupd-refresh.timer 2>/dev/null || true
 systemctl mask ssh.service ssh.socket 2>/dev/null || true
+# NetworkManager owns networking (Wi-Fi via nmtui); no second network stack.
+systemctl disable systemd-networkd.service systemd-networkd.socket systemd-networkd-wait-online.service 2>/dev/null || true
+# Not used: A/B sysupdate isn't configured yet; no ad-style MOTD news.
+systemctl disable systemd-sysupdate.timer systemd-sysupdate-reboot.timer motd-news.timer 2>/dev/null || true
 
 # ── boot splash ─────────────────────────────────────────────────────────────
 if command -v plymouth-set-default-theme >/dev/null; then
@@ -82,4 +88,4 @@ else
   ln -sf /usr/share/plymouth/themes/i30ltz/i30ltz.plymouth /etc/alternatives/default.plymouth
 fi
 
-echo "I30LTZ Recovery OS ${VERSION} (${BUILD_DATE}) configured."
+echo "I30LTZ Recovery OS ${OS_VERSION} (${BUILD_DATE}) configured."
