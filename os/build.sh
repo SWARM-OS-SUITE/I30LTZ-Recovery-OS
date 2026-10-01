@@ -45,9 +45,12 @@ fi
 got="$(git -C "$MKOSI_DIR" rev-parse HEAD)"
 [[ "$got" == "$MKOSI_COMMIT" ]] || { red "mkosi checkout is $got, expected $MKOSI_COMMIT — delete $MKOSI_DIR and retry"; exit 1; }
 
-# ── space check: tools tree + image + cache need ~25G ──────────────────────
+# ── a same-version, same-day rebuild replaces the previous output ──────────
+if [[ -d "$DEST" ]]; then yel "replacing earlier build in $DEST"; rm -rf "$DEST"; fi
+
+# ── space check: tools tree + image + split partitions need ~15G ───────────
 free_gb=$(df -BG --output=avail "$OS_DIR" | tail -1 | tr -dc '0-9')
-(( free_gb >= 25 )) || { red "need 25G free next to $OS_DIR (have ${free_gb}G)"; exit 1; }
+(( free_gb >= 15 )) || { red "need 15G free next to $OS_DIR (have ${free_gb}G)"; exit 1; }
 
 cd "$OS_DIR"
 [[ "${1:-}" == --clean ]] && rm -rf mkosi.cache mkosi.tools out/*.raw out/*.efi
