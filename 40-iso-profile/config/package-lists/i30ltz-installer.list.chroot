@@ -1,0 +1,14 @@
+# I30LTZ Recovery OS - Installer packages | v0.3.0-alpha | 2026-10-05
+calamares
+squashfs-tools
+rsync
+kpartx
+qml-module-qtquick2
+qml-module-qtquick-layouts
+qml-module-qtquick-window2
+qml-module-qtquick-controls2
+qtwayland5
+shim-signed
+grub-efi-amd64-signed
+polkitd
+xdg-utils

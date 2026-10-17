@@ -1,0 +1,18 @@
+# Dr. Boltz bridge worker (user service). NOT enabled by anything; start it when you want Dr. Boltz working:
+#   mkdir -p ~/.config/systemd/user && cp boltz-bridge.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user start boltz-bridge     (stop it the same way)
+# Pair it first: lucille-assistant pair --role agent ; python3 boltz_bridge.py pair CODE
+# It runs as you because it needs your Claude login (~/.claude) and your repos; the coding engine inside is sandboxed.
+[Unit]
+Description=Dr. Boltz bridge worker (codes Lucille's challenges on branches; you approve every merge)
+After=network-online.target lucille-assistant.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /mnt/recoverybuild/30-source/mad-dr-boltz/brain/boltz_bridge.py run
+Restart=on-failure
+RestartSec=20
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

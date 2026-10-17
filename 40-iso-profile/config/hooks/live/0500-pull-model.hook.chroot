@@ -1,0 +1,41 @@
+#!/bin/bash
+# I30LTZ Recovery OS - Hook: model provisioning
+# Version: 0.3.0-alpha | Date: 2026-10-05
+# Stage: live (runs inside chroot during build)
+# -------------------------------------------------------
+# The 4.7 GB model is NOT baked into the ISO (single files >4 GiB are unsafe on
+# ISO9660). Instead:
+#   1. make-persistent-usb.sh copies it onto the USB's persistence partition, OR
+#   2. this first-run service pulls it on first boot (needs internet).
+# The service is a no-op if the model is already present.
+# -------------------------------------------------------
+
+set -e
+echo "[I30LTZ HOOK] 0500-model: installing first-run model service..."
+
+cat > /etc/systemd/system/i30ltz-first-run.service << 'UNIT'
+# I30LTZ First Run - ensure qwen2.5:7b is present | v0.3.0 | 2026-10-05
+[Unit]
+Description=I30LTZ First Run - ensure qwen2.5:7b AI model
+After=ollama.service network-online.target
+Wants=network-online.target ollama.service
+ConditionPathExists=!/opt/i30ltz/runtime/.first-run-done
+
+[Service]
+Type=oneshot
+User=ollama
+Environment="HOME=/usr/share/ollama"
+Environment="OLLAMA_HOST=127.0.0.1:11434"
+ExecStartPre=/bin/sleep 6
+ExecStart=/bin/bash -c '/usr/local/bin/ollama list | grep -q "qwen2.5:7b" || /usr/local/bin/ollama pull qwen2.5:7b'
+ExecStartPost=+/bin/bash -c 'touch /opt/i30ltz/runtime/.first-run-done'
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl enable i30ltz-first-run 2>/dev/null || true
+echo "[I30LTZ HOOK] 0500-model: DONE"

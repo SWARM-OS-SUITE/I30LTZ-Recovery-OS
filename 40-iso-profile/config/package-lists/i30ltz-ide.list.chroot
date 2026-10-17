@@ -1,0 +1,9 @@
+# I30LTZ IDE (Flutter Linux bundle) runtime needs: GTK3, GL/EGL, epoxy, git for the Git panel, zenity for file dialogs.
+# The bundle itself is staged by 70-scripts/build.sh; fonts are bundled in the app. Added 2026-10-12.
+libgtk-3-0t64
+libepoxy0
+libgl1-mesa-dri
+libegl1
+libgles2
+git
+zenity

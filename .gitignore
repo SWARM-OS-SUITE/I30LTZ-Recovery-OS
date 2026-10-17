@@ -1,0 +1,94 @@
+# I30LTZ Recovery OS — .gitignore
+# Version: 0.1.0 | Date: 2026-10-05
+
+# ISOs and large binaries
+*.iso
+*.img
+*.bin
+*.squashfs
+10-releases/
+80-vm/*.qcow2
+
+# Build artifacts
+99-archive/
+*.log
+build-tmp/
+
+# Env / secrets
+.env
+.env.local
+*.pem
+*.key
+*.crt
+client_secret_*.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+.next/
+dist/
+
+# Android
+*.apk
+*.aab
+.gradle/
+build/
+
+# System
+lost+found/
+.Trash-*/
+40-iso-profile/config/includes.chroot/opt/i30ltz/brain/
+
+# Secrets / VM keys (added 2026-10-06)
+.env.*
+!.env.*.template
+!.env.example
+build-vm-key
+build-vm-key.pub
+80-vm/seed/
+80-vm/*.pid
+*.qcow2
+*.img
+serial.log
+*.tar.zst
+*.tar.gz
+
+# Separate git repos living inside this tree
+/I30LTZ-Recover/
+/I30LTZ-Recovery-companion/
+/I30LTZ-Recovery/i30ltz-recovery
+
+# Swap / restore artifacts (added 2026-10-06)
+/swapfile
+*.swap
+
+# live-build generated config (recreated by 40-iso-profile/auto/config) and build state
+40-iso-profile/config/binary
+40-iso-profile/config/bootstrap
+40-iso-profile/config/chroot
+40-iso-profile/config/common
+40-iso-profile/config/source
+40-iso-profile/.build/
+40-iso-profile/cache/
+40-iso-profile/chroot/
+40-iso-profile/binary/
+40-iso-profile/*.iso
+
+# Boltz phone-app art moved here 2026-10-12; user: not for Recovery OS, keep out of git
+boltsimages/
+
+# I30LTZ IDE (RC-14, Flutter): toolchain + generated files never go to git (added 2026-10-12)
+/25-toolchain/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+linux/flutter/ephemeral/
+40-iso-profile/config/includes.chroot/opt/i30ltz/ide/
+40-iso-profile/config/includes.chroot/opt/i30ltz/images/
+40-iso-profile/config/bootloaders/
+40-iso-profile/config/includes.chroot/opt/i30ltz/fonts/

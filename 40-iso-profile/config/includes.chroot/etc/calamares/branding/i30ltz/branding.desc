@@ -1,0 +1,30 @@
+---
+componentName: i30ltz
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 900px,600px
+windowPlacement: center
+strings:
+  productName: "I30LTZ Recovery OS"
+  shortProductName: "I30LTZ"
+  version: "0.3.0-alpha"
+  shortVersion: "0.3.0"
+  versionedName: "I30LTZ Recovery OS 0.3.0-alpha"
+  shortVersionedName: "I30LTZ 0.3"
+  bootloaderEntryName: "I30LTZ Recovery OS"
+  productUrl: "https://www.debian.org"
+  supportUrl: "https://www.debian.org"
+  knownIssuesUrl: "https://www.debian.org"
+  releaseNotesUrl: "https://www.debian.org"
+images:
+  productLogo: "logo.png"
+  productIcon: "logo.png"
+  productWelcome: "welcome.png"
+slideshow: "show.qml"
+slideshowAPI: 2
+style:
+  sidebarBackground: "#0a0a0f"
+  sidebarText: "#ffffff"
+  sidebarTextSelect: "#ba0c2f"
+  sidebarTextHighlight: "#ba0c2f"

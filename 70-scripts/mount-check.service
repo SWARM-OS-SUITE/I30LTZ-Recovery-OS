@@ -1,0 +1,8 @@
+[Unit]
+Description=Check canonical mount points (same on every OS)
+ConditionPathExists=/mnt/recoverybuild/70-scripts/check-mounts.sh
+
+[Service]
+Type=oneshot
+ExecStart=/mnt/recoverybuild/70-scripts/check-mounts.sh --quiet
+ExecStopPost=/bin/sh -c 'if [ "$$EXIT_STATUS" != "0" ] && command -v notify-send >/dev/null; then notify-send -u critical "Mount check failed" "Run: bash /mnt/recoverybuild/70-scripts/check-mounts.sh"; fi'

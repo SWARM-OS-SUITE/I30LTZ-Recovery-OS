@@ -1,0 +1,12 @@
+[package]
+name = "mad-it"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "mad-it"
+path = "src/main.rs"
+
+[dependencies]
+i30ltz-core.workspace = true

@@ -1,0 +1,13 @@
+[Unit]
+Description=DR. I30LTZ Service Watchdog
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/opt/i30ltz/scripts/watchdog.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- I30LTZ Recovery OS - Openbox root menu | v0.3.0-alpha | 2026-10-05 -->
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+<menu id="root-menu" label="I30LTZ">
+  <item label="Recovery GUI (Mad Dr. Boltz)"><action name="Execute"><command>i30ltz-gui</command></action></item>
+  <item label="I30LTZ IDE (code editor + MAD AI)"><action name="Execute"><command>i30ltz-ide</command></action></item>
+  <item label="Install to Disk"><action name="Execute"><command>sudo -E calamares</command></action></item>
+  <item label="GParted"><action name="Execute"><command>sudo -E gparted</command></action></item>
+  <item label="Terminal"><action name="Execute"><command>xterm</command></action></item>
+  <separator/>
+  <item label="Reboot"><action name="Execute"><command>systemctl reboot</command></action></item>
+  <item label="Power off"><action name="Execute"><command>systemctl poweroff</command></action></item>
+</menu>
+</openbox_menu>

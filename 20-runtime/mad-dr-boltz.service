@@ -1,0 +1,42 @@
+# Mad Dr. Boltz — systemd service (Ubuntu)
+# Version: 0.1.0-alpha | Date: 2026-10-05
+# Install: sudo cp mad-dr-boltz.service /etc/systemd/system/
+#          sudo systemctl daemon-reload
+#          sudo systemctl enable --now mad-dr-boltz
+
+[Unit]
+Description=Mad Dr. Boltz SSE Backend — I30LTZ Recovery OS AI
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+User=recovery
+Group=recovery
+WorkingDirectory=/mnt/recoverybuild/30-source/mad-dr-boltz/brain
+
+# Environment
+Environment="BOLTZ_PORT=5000"
+Environment="OLLAMA_URL=http://localhost:11434"
+Environment="AGENT_MODEL=qwen2.5:7b"
+Environment="NTFY_TOPIC=boltz-approval"
+EnvironmentFile=-/mnt/recoverybuild/20-runtime/.env.boltz
+
+ExecStart=/mnt/recoverybuild/30-source/mad-dr-boltz/brain/venv/bin/python3 \
+          /mnt/recoverybuild/30-source/mad-dr-boltz/brain/boltz_server.py
+
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mad-dr-boltz
+
+# Security hardening (Ubuntu)
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/mnt/recoverybuild/30-source/mad-dr-boltz/brain
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,74 @@
+# I30LTZ Recovery OS — Recovery & Diagnostics Packages
+# Version: 0.2.0-alpha | Date: 2026-10-05
+# Category: filesystem repair, data recovery, diagnostics
+
+# ── Filesystem tools ──────────────────────────────────────
+e2fsprogs
+e2fsck-static
+xfsprogs
+btrfs-progs
+dosfstools
+mtools
+ntfs-3g
+f2fs-tools
+hfsprogs
+exfatprogs
+
+# ── Partition / disk ─────────────────────────────────────
+parted
+gparted
+gdisk
+fdisk
+lvm2
+mdadm
+cryptsetup
+cryptsetup-initramfs
+dmsetup
+
+# ── Bootloader repair ────────────────────────────────────
+# grub-pc and grub-efi-amd64 conflict; the -bin packages coexist and
+# let grub-install target both BIOS (i386-pc) and UEFI (x86_64-efi).
+grub-pc-bin
+grub-efi-amd64-bin
+grub-common
+os-prober
+efibootmgr
+
+# ── Data recovery ────────────────────────────────────────
+testdisk
+foremost
+safecopy
+gddrescue
+dc3dd
+
+# ── S.M.A.R.T. / disk health ────────────────────────────
+smartmontools
+hdparm
+nvme-cli
+fio
+
+# ── Windows repair ───────────────────────────────────────
+chntpw
+libguestfs-tools
+
+# ── Cloning / imaging ────────────────────────────────────
+rsync
+partclone
+partimage
+fsarchiver
+pigz
+pv
+
+# ── Memory / hardware diagnostics ────────────────────────
+memtester
+stress-ng
+lshw
+dmidecode
+inxi
+hwinfo
+
+# ── Network recovery ─────────────────────────────────────
+nfs-common
+samba-client
+smbclient
+cifs-utils

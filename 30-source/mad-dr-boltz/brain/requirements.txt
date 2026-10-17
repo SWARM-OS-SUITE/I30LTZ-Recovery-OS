@@ -1,0 +1,5 @@
+# Mad Dr. Boltz — Python dependencies
+# Version: 0.1.0-alpha | Date: 2026-10-05
+flask>=3.0.0
+waitress>=3.0.0
+requests>=2.31.0

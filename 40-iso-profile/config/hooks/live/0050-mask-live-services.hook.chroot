@@ -1,0 +1,25 @@
+#!/bin/bash
+# ISO Live Hook: mask network-exposing services in live session
+# Date: 2026-10-06 | Source: [FIX-C5] i30ltz-fixes/03-mask-live-services.sh
+# These services auto-enable on boot and expose the live machine to networks.
+# A recovery disk should NEVER open remote access by default.
+
+set -euo pipefail
+
+echo "[i30ltz-hook] Masking tailscaled and sentinel in live session..."
+
+systemctl mask tailscaled.service    2>/dev/null || true
+systemctl mask sentinel.service      2>/dev/null || true
+systemctl disable tailscaled.service 2>/dev/null || true
+systemctl disable sentinel.service   2>/dev/null || true
+
+# Also prevent socket activation if sockets exist
+systemctl mask tailscaled.socket 2>/dev/null || true
+systemctl mask sentinel.socket   2>/dev/null || true
+
+# Drop any lingering wants symlinks
+rm -f /etc/systemd/system/multi-user.target.wants/tailscaled.service
+rm -f /etc/systemd/system/multi-user.target.wants/sentinel.service
+
+echo "[i30ltz-hook] Done. tailscaled + sentinel are masked in the live environment."
+echo "[i30ltz-hook] To access remotely in live: sudo systemctl unmask tailscaled && sudo systemctl start tailscaled"

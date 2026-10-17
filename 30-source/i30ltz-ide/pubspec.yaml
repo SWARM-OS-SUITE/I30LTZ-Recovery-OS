@@ -1,0 +1,41 @@
+name: i30ltz_ide
+description: I30LTZ IDE - the professional IDE of I30LTZ Recovery OS (MAD AI). Forked from SWARM OS Apex.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+  flutter: '>=3.16.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.8.1
+  http: ^1.3.0
+  shared_preferences: ^2.5.3
+  collection: ^1.19.1
+  file_picker: ^12.0.0
+  crypto: ^3.0.5
+  cryptography: ^2.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato-Regular.ttf
+        - asset: assets/fonts/Lato-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Lato-Black.ttf
+          weight: 900
+    - family: Hack
+      fonts:
+        - asset: assets/fonts/Hack-Regular.ttf
+        - asset: assets/fonts/Hack-Bold.ttf
+          weight: 700

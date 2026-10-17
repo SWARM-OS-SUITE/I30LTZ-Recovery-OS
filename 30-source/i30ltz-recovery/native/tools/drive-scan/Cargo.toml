@@ -1,0 +1,12 @@
+[package]
+name = "drivescan"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "drivescan"
+path = "src/main.rs"
+
+[dependencies]
+i30ltz-core.workspace = true

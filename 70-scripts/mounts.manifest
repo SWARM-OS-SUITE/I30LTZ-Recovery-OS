@@ -1,0 +1,20 @@
+# CANONICAL MOUNT MAP: identical on every OS (Dev Ubuntu/Debian, CachyOS, SWARM OS, I30LTZ Recovery OS).
+# Format (tab-separated):  mountpoint  filesystem-UUID  fstype  label  owner  required(yes|no)
+# Rules:
+#  * Mount by filesystem UUID, never by /dev/sdX or /dev/disk/by-id (letters and USB ports change).
+#  * Same mountpoint path on every OS. fstab options: defaults,nofail,x-systemd.automount (no 'auto' type guessing).
+#  * Keep this file, mounts.manifest, and 00-CURRENT/MOUNTS.md in step. Update all three when a drive changes.
+#  * No secrets here.
+# Last verified against live lsblk: 2026-10-10 (recoveryos UUID changed by the T7 re-partition; boltzbuild UUID corrected 2026-10-09; swarmbuild UUID corrected 2026-10-07)
+/mnt/storage	2de6ca36-421c-4c3e-8bc4-fbe3e6f66238	ext4	lucy-master	all	no	# inside LUKS container UUID a24202ce-4d76-4eb7-8923-8e8ddbacdaa7 (disk letter varies), unlock first
+/mnt/archive	c400a0ee-6710-4fe7-ad7a-c80dc3f402ca	ext4	lucy-master-bak	all	no
+/mnt/Lucy	62f0e009-43c2-4760-8d6c-d7c445f5f3df	ext4	Swarm Build	SWARM	no
+/mnt/swarmbuild	5c84ef0e-d7b8-4b36-b1c4-58817b483dda	ext4	swarm-build	SWARM	no
+/mnt/recoverybuild	a409250b-3973-4448-aeda-94a911538eb4	btrfs	Recovery-build	RECOVERY	no
+/mnt/downloads	acde635e-ac49-4bec-ac69-a6b12a2478e4	ext4	downloads	all	no	# shared downloads for all OSes (created 2026-10-06)
+/mnt/ventoy	5ABB-83DF	exfat	Ventoy	all	no
+/mnt/swarm	6a6b5a8c-aa9e-4286-a5f1-c27174b41cbc	btrfs	swarm-root	SWARM	no	# SWARM installed root; was 366134c3-... before the 2026-10-06 reformat
+/mnt/brains	fba1b27f-407b-4385-9dfa-851833f249db	ext4	i30ltz-brains	SWARM	no	# docs also call this /mnt/i30ltz-brains and /mnt/boltz: normalise to /mnt/brains
+/mnt/lucillebuild	93037d5a-5b82-484c-ac20-28211c09e1c0	ext4	C. Lucille build	LUCILLE	no	# Lucille Assistant app build (added 2026-10-09). Same 1.8TB drive as swarmbuild/recoverybuild
+/mnt/boltzbuild	6f7c7656-2984-4fb0-81c8-bfc11ca81461	ext4	Boltz Built	BOLTZ	no	# Boltz Recovery phone-app build, partition D (added 2026-10-09). Created NTFS (67C2E9F8241FD7AE) by mistake; reformatted ext4 by the user in GNOME Disks. Fix stale fstab/automount: /mnt/Lucy/70-scripts/fix_boltzbuild_mount.sh
+/mnt/recoveryos	96969ed2-15b1-48e6-815e-20fa87d1fb5b	btrfs	Recovery OS	RECOVERY	no	# Recovery OS installed root/home on the Samsung T7 (disk letter varies: sdb on 2026-10-10). T7 re-made as GPT 2026-10-10 (same sizes, same fs UUIDs): EFI 1000M 2D87-5490 | root 453G (this) | swap 5.9G | 471.6G UNFORMATTED partition 'FREE reserved for a future OS' (never format it without the user). Replaces 490b9e60-... and 71287bbf-...

@@ -1,0 +1,5 @@
+[Unit]
+Description=Auto-sync Recovery OS repos to GitHub
+[Service]
+Type=oneshot
+ExecStart=/mnt/recoverybuild/70-scripts/auto_sync.sh

@@ -1,0 +1,28 @@
+#!/bin/bash
+# I30LTZ Recovery OS — Hook: Chroot Cleanup
+# Version: 0.2.0-alpha | Date: 2026-10-05
+# Stage: normal (runs at end of chroot build)
+# -------------------------------------------------------
+
+set -e
+
+echo "[I30LTZ HOOK] 0010-cleanup: Cleaning up chroot..."
+
+# Clean apt cache
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+
+# Remove temp files
+rm -rf /tmp/* /var/tmp/*
+
+# Remove machine-id (will regenerate on first boot)
+truncate -s 0 /etc/machine-id
+rm -f /var/lib/dbus/machine-id
+
+# Remove SSH host keys (regenerated on first boot)
+rm -f /etc/ssh/ssh_host_*
+
+# Trim pip cache
+rm -rf /root/.cache/pip 2>/dev/null || true
+
+echo "[I30LTZ HOOK] 0010-cleanup: DONE"

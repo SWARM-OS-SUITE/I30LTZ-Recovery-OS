@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+SRC=/i30ltz-splash/plymouth_theme
+bash "$SRC/install.sh"

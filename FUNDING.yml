@@ -1,0 +1,22 @@
+mkdir -p .github
+cat > .github/FUNDING.yml << 'EOF'
+github: [i320k3n]
+ko_fi: i320kni30ltz
+liberapay: REPLACE_AFTER_SIGNUP
+open_collective: swarm-os-suite
+custom:
+  - "https://polar.sh/i320k3n"
+EOF
+github: [i320k3n]
+ko_fi: i320kni30ltz
+liberapay: i30ltz
+open_collective: swarm-os-suite
+custom:
+  - "https://polar.sh/i320k3n"
+  
+github: [i320k3n]
+ko_fi: i320kni30ltz
+liberapay: i30ltz
+open_collective: swarm-os-suite
+custom:
+  - "https://polar.sh/i320k3n"

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Coder Droid Editor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
+  #editor-container { width: 100%; height: 100%; }
+</style>
+<!--
+  NOTE FOR BUILD:
+  Download the Monaco Editor standalone release and place the files here:
+    assets/monaco/vs/loader.js
+    assets/monaco/vs/editor/editor.main.js
+    assets/monaco/vs/editor/editor.main.css
+    assets/monaco/vs/base/... (all Monaco dist files)
+
+  Download from: https://www.npmjs.com/package/monaco-editor
+  Run: npm install monaco-editor
+  Copy: node_modules/monaco-editor/min/vs → assets/monaco/vs
+-->
+<link rel="stylesheet" href="vs/editor/editor.main.css"/>
+</head>
+<body>
+<div id="editor-container"></div>
+
+<script src="vs/loader.js"></script>
+<script>
+require.config({ paths: { vs: 'vs' } });
+
+require(['vs/editor/editor.main'], function() {
+
+  // ── Create Monaco editor ────────────────────────────────────────────────────
+  const editor = monaco.editor.create(document.getElementById('editor-container'), {
+    value: '',
+    language: 'plaintext',
+    theme: 'vs-dark',
+    fontSize: 13,
+    fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, monospace",
+    fontLigatures: true,
+    lineNumbers: 'on',
+    minimap: { enabled: true, maxColumn: 80 },
+    scrollBeyondLastLine: false,
+    wordWrap: 'off',
+    tabSize: 4,
+    insertSpaces: true,
+    renderWhitespace: 'selection',
+    smoothScrolling: true,
+    cursorBlinking: 'smooth',
+    cursorSmoothCaretAnimation: 'on',
+    bracketPairColorization: { enabled: true },
+    guides: { bracketPairs: true, indentation: true },
+    formatOnPaste: false,
+    formatOnType: false,
+    automaticLayout: true,       // recalculates on container resize
+  });
+
+  // ── State ───────────────────────────────────────────────────────────────────
+  let currentTabId = null;
+  let isLoading    = false;
+
+  // Map tabId → editor model (so switching tabs restores scroll/cursor)
+  const models = new Map();
+
+  // ── Content change → notify Android ────────────────────────────────────────
+  editor.onDidChangeModelContent(() => {
+    if (!isLoading && currentTabId) {
+      Android.onContentChanged(currentTabId);
+    }
+  });
+
+  // ── Cursor change → update status bar ──────────────────────────────────────
+  editor.onDidChangeCursorPosition(e => {
+    Android.onCursorMoved(e.position.lineNumber, e.position.column);
+  });
+
+  // ── Ctrl/Cmd+S → save ──────────────────────────────────────────────────────
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+    if (currentTabId) {
+      Android.onSaveRequested(currentTabId, editor.getValue());
+    }
+  });
+
+  // ── Public API called from Kotlin via evaluateJavascript ──────────────────
+  window.coderdroid = {
+
+    /**
+     * openFile({ tabId, path, language, content })
+     * Called by MonacoEditorView.openFile()
+     */
+    openFile: function({ tabId, path, language, content }) {
+      isLoading = true;
+      currentTabId = tabId;
+
+      // Reuse or create a model for this tab
+      let model = models.get(tabId);
+      if (!model) {
+        model = monaco.editor.createModel(content, language);
+        models.set(tabId, model);
+      }
+
+      editor.setModel(model);
+      editor.focus();
+      isLoading = false;
+    },
+
+    /**
+     * closeTab(tabId)
+     * Disposes the model when a tab is closed to free memory.
+     */
+    closeTab: function(tabId) {
+      const model = models.get(tabId);
+      if (model) {
+        model.dispose();
+        models.delete(tabId);
+      }
+      if (currentTabId === tabId) {
+        currentTabId = null;
+        editor.setModel(null);
+      }
+    },
+
+    /**
+     * setTheme('vs-dark' | 'vs' | 'hc-black')
+     */
+    setTheme: function(theme) {
+      monaco.editor.setTheme(theme);
+    },
+
+    /**
+     * insertSnippet(text) — paste a snippet at cursor
+     */
+    insertSnippet: function(text) {
+      const selection = editor.getSelection();
+      editor.executeEdits('snippet', [{
+        range: selection,
+        text: text,
+        forceMoveMarkers: true
+      }]);
+    }
+  };
+
+  // ── Tell Kotlin the editor is ready ────────────────────────────────────────
+  Android.onReady();
+});
+</script>
+</body>
+</html>

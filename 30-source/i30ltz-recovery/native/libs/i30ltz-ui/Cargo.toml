@@ -1,0 +1,8 @@
+[package]
+name = "i30ltz-ui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+i30ltz-core.workspace = true

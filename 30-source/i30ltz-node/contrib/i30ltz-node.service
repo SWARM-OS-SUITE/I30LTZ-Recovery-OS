@@ -1,0 +1,20 @@
+# User service for the I30LTZ node agent.
+#   mkdir -p ~/bin ~/.config/systemd/user
+#   cp dist/i30ltz-node ~/bin/ && cp contrib/i30ltz-node.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now i30ltz-node
+#   loginctl enable-linger $USER        # keep it running when you are logged out
+#
+# --terminal lets paired phones open a shell as THIS user (see README "Security"). Remove it for telemetry only.
+# NoNewPrivileges is deliberately NOT set: it would stop `sudo` working in the phone's terminal.
+[Unit]
+Description=I30LTZ node agent
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=%h/bin/i30ltz-node serve --terminal
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

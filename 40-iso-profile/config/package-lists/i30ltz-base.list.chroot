@@ -1,0 +1,85 @@
+# I30LTZ Recovery OS — Base System Packages
+# Version: 0.4.0-alpha | Date: 2026-10-07 | Debian 13 trixie
+# Category: base + system tools
+
+# ── Live boot (Debian live-boot) ─────────────────────────
+live-boot
+live-config
+live-config-systemd
+# live-config only Recommends this; with --apt-recommends false it is needed to create liveuser + default password
+user-setup
+# ── Core system ──────────────────────────────────────────
+systemd
+systemd-sysv
+dbus
+udev
+bash
+coreutils
+util-linux
+procps
+psmisc
+iproute2
+iputils-ping
+net-tools
+wget
+curl
+jq
+ca-certificates
+gnupg
+apt-transport-https
+lsb-release
+sudo
+less
+nano
+vim-tiny
+htop
+screen
+tmux
+tree
+
+# ── Network ──────────────────────────────────────────────
+network-manager
+wireless-tools
+wpasupplicant
+openssh-client
+nmap
+
+# ── X11 minimal (for Raylib GUI) ─────────────────────────
+xserver-xorg-core
+xserver-xorg-input-all
+xserver-xorg-video-all
+x11-xserver-utils
+xinit
+xterm
+openbox
+lightdm
+lightdm-gtk-greeter
+
+# ── Raylib runtime deps ───────────────────────────────────
+libgl1
+libgles2
+libegl1
+libglfw3
+libx11-6
+libxrandr2
+libxinerama1
+libxcursor1
+libxi6
+libxext6
+libxxf86vm1
+libasound2t64
+libpulse0
+fonts-liberation
+fonts-dejavu-core
+
+# ── Python (for Mad Dr. Boltz brain) ─────────────────────
+python3
+python3-pip
+python3-venv
+python3-dev
+
+# ── Companion-app networking (v0.3.1) ───────────────────
+nftables
+qrencode
+avahi-daemon
+libnss-mdns

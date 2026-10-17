@@ -1,0 +1,54 @@
+#!/bin/bash
+# I30LTZ Recovery OS — Hook: Install Rust GUI Binary
+# Version: 0.2.0-alpha | Date: 2026-10-05
+# Stage: live (runs inside chroot during build)
+# -------------------------------------------------------
+# Copies i30ltz-recovery Raylib binary from build artifacts
+# Binary must be pre-built and staged at:
+#   /mnt/recoverybuild/30-source/i30ltz-recovery/target/release/i30ltz-recovery (staged by build.sh)
+# -------------------------------------------------------
+
+set -e
+
+echo "[I30LTZ HOOK] 0300-install-binary: Installing Rust GUI binary..."
+
+# NOTE: the host's /mnt/recoverybuild does NOT exist inside the chroot.
+# The binary is shipped via config/includes.chroot/usr/local/bin/ instead.
+BINARY_DST="/usr/local/bin/i30ltz-recovery"
+
+if [ -f "$BINARY_DST" ]; then
+  chmod 755 "$BINARY_DST"
+  echo "[I30LTZ HOOK]   Binary present at $BINARY_DST"
+else
+  echo "[I30LTZ HOOK]   WARNING: Binary missing from includes.chroot"
+  echo "[I30LTZ HOOK]   Creating stub launcher — build Rust binary first."
+  # Stub: launches xterm with instructions if real binary missing
+  cat > "$BINARY_DST" << 'STUB'
+#!/bin/bash
+# i30ltz-recovery stub — real binary not yet built
+# Build: cd /mnt/recoverybuild/30-source/i30ltz-recovery && cargo build --release
+xterm -e "echo 'i30ltz-recovery not built yet.'; echo 'cd /mnt/recoverybuild/30-source/i30ltz-recovery && cargo build --release'; bash"
+STUB
+  chmod +x "$BINARY_DST"
+fi
+
+# ── Desktop entry ────────────────────────────────────────
+mkdir -p /usr/share/applications /usr/share/pixmaps
+
+cat > /usr/share/applications/i30ltz-recovery.desktop << 'DESK'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=I30LTZ Recovery
+GenericName=AI Recovery OS
+Comment=Mad Dr. Boltz — OS Recovery & Diagnostics
+Exec=i30ltz-gui
+Icon=i30ltz-recovery
+Terminal=false
+Categories=System;Settings;
+StartupNotify=true
+Keywords=recovery;repair;data;disk;ai;
+DESK
+
+
+echo "[I30LTZ HOOK] 0300-install-binary: DONE"

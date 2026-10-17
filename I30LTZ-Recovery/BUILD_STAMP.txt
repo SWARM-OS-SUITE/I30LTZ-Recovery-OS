@@ -1,0 +1,6 @@
+Synced:    2026-09-23 14:43:29
+Source:    /mnt/Lucy/30-source/i30ltz-recovery(seperate-related-project)/target/release/i30ltz-recovery
+Size:      2801864 bytes
+SHA256:    cc8e005f6fc565570873224170c4a5f4878519cd3a97feb57ec0dd1b6740f089
+Hostname:  
+OS:        7.2.4-arch1-2

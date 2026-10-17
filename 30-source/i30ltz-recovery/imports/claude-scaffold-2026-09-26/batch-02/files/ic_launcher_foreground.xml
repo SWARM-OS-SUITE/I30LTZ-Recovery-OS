@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- ══ Outer hex ring — electric cyan ══ -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,10 L91,31 L91,77 L54,98 L17,77 L17,31 Z"
+        android:strokeWidth="4"
+        android:strokeColor="#FF00E5FF"/>
+
+    <!-- Vertex glow dots — cyan -->
+    <path android:fillColor="#FF00E5FF"
+        android:pathData="M51,10 a3,3 0 1 0 6,0 a3,3 0 1 0 -6,0"/>
+    <path android:fillColor="#FF00E5FF"
+        android:pathData="M88,31 a3,3 0 1 0 6,0 a3,3 0 1 0 -6,0"/>
+    <path android:fillColor="#FF00E5FF"
+        android:pathData="M88,77 a3,3 0 1 0 6,0 a3,3 0 1 0 -6,0"/>
+    <path android:fillColor="#FF00E5FF"
+        android:pathData="M51,98 a3,3 0 1 0 6,0 a3,3 0 1 0 -6,0"/>
+    <path android:fillColor="#FF00E5FF"
+        android:pathData="M14,77 a3,3 0 1 0 6,0 a3,3 0 1 0 -6,0"/>
+    <path android:fillColor="#FF00E5FF"
+        android:pathData="M14,31 a3,3 0 1 0 6,0 a3,3 0 1 0 -6,0"/>
+
+    <!-- ══ Inner hex panel — deep purple fill ══ -->
+    <path android:pathData="M54,24 L81,40 L81,68 L54,84 L27,68 L27,40 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="27"
+                android:startY="24"
+                android:endX="81"
+                android:endY="84"
+                android:type="linear">
+                <item android:color="#CC1A0055" android:offset="0.0"/>
+                <item android:color="#CC2D0066" android:offset="1.0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- ══ Inner hex ring — electric purple ══ -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,24 L81,40 L81,68 L54,84 L27,68 L27,40 Z"
+        android:strokeWidth="2"
+        android:strokeColor="#FFD500FF"/>
+
+    <!-- ══ Lightning bolt outer (glow) — purple-white ══ -->
+    <path
+        android:fillColor="#AAD500FF"
+        android:pathData="M63,27 L37,57 L54,57 L45,83 L71,51 L56,51 Z"/>
+
+    <!-- ══ Lightning bolt mid — bright yellow ══ -->
+    <path
+        android:fillColor="#FFFFCC00"
+        android:pathData="M61,29 L39,55 L54,55 L46,79 L69,51 L56,51 Z"/>
+
+    <!-- ══ Lightning bolt core — white-hot ══ -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M59,32 L44,52 L55,52 L48,70 L64,50 L56,50 Z"/>
+
+    <!-- ══ Bolt highlight — pure white spark ══ -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M58,34 L52,44 L56,44 L53,52 L59,44 L56,44 Z"/>
+
+    <!-- ══ Corner hex micro-cells — SWARM accent ══ -->
+    <!-- Top-right -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M82,14 L90,19 L90,29 L82,34 L74,29 L74,19 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#AA00E5FF"/>
+    <!-- Bottom-left -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M26,74 L34,79 L34,89 L26,94 L18,89 L18,79 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#AA00E5FF"/>
+    <!-- Bottom-right -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M82,74 L90,79 L90,89 L82,94 L74,89 L74,79 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#AAD500FF"/>
+
+    <!-- ══ Circuit connector traces ══ -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M82,24 L81,40"
+        android:strokeWidth="1"
+        android:strokeColor="#5500E5FF"/>
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M27,68 L26,79"
+        android:strokeWidth="1"
+        android:strokeColor="#5500E5FF"/>
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M81,68 L82,79"
+        android:strokeWidth="1"
+        android:strokeColor="#55D500FF"/>
+</vector>

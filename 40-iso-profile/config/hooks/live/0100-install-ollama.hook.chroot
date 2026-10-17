@@ -1,0 +1,66 @@
+#!/bin/bash
+# I30LTZ Recovery OS — Hook: Install Ollama
+# Version: 0.2.0-alpha | Date: 2026-10-05
+# Stage: live (runs inside chroot during build)
+# -------------------------------------------------------
+
+set -e
+
+echo "[I30LTZ HOOK] 0100-install-ollama: Installing Ollama..."
+
+# Download and install Ollama binary
+OLLAMA_VERSION="0.3.14"
+OLLAMA_URL="https://github.com/ollama/ollama/releases/download/v${OLLAMA_VERSION}/ollama-linux-amd64"
+
+# Try to download (build machine needs internet)
+if curl -fsSL --retry 3 --retry-delay 2 \
+     -o /usr/local/bin/ollama \
+     "$OLLAMA_URL" 2>/dev/null; then
+  chmod +x /usr/local/bin/ollama
+  echo "[I30LTZ HOOK]   Ollama v${OLLAMA_VERSION} installed."
+else
+  echo "[I30LTZ HOOK]   WARNING: Could not download Ollama — install manually after boot."
+  echo "[I30LTZ HOOK]   Run: curl -fsSL https://ollama.com/install.sh | sh"
+  # Create a stub that tells user what to do
+  cat > /usr/local/bin/ollama-install << 'STUB'
+#!/bin/bash
+echo "[I30LTZ] Installing Ollama now..."
+curl -fsSL https://ollama.com/install.sh | sh
+STUB
+  chmod +x /usr/local/bin/ollama-install
+fi
+
+# Create ollama system user
+id ollama &>/dev/null || useradd -r -s /bin/false -d /usr/share/ollama ollama
+mkdir -p /usr/share/ollama/.ollama
+chown -R ollama:ollama /usr/share/ollama
+
+# Ollama systemd service
+cat > /etc/systemd/system/ollama.service << 'EOF'
+# Ollama — Local LLM server (localhost only) | v0.3.0 | 2026-10-05
+[Unit]
+Description=Ollama LLM Server
+After=network.target
+
+[Service]
+Type=simple
+User=ollama
+Group=ollama
+Environment="HOME=/usr/share/ollama"
+Environment="OLLAMA_HOST=127.0.0.1:11434"
+ExecStartPre=+/bin/chown -R ollama:ollama /usr/share/ollama
+ExecStart=/usr/local/bin/ollama serve
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ollama
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable at boot
+systemctl enable ollama 2>/dev/null || true
+
+echo "[I30LTZ HOOK] 0100-install-ollama: DONE"

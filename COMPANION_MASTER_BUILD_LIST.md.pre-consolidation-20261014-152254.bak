@@ -1,0 +1,148 @@
+# 📋 i30LTZ Recovery Companion App — MASTER BUILD LIST
+# Dr. I30LTZ Companion | MAD AI | i30LTZ Recovery Companion App
+# Created: 2026-10-10 | v6.2.22
+
+---
+
+## HOW TO READ
+Format: DATE | VERSION | PRIORITY | TASK | STATUS
+Priorities: CRITICAL > HIGH > MEDIUM > LOW
+App Root: /mnt/boltzbuild/src/I30LTZ-Recovery-companion/
+Release APK Target: app/build/outputs/apk/release/app-release.apk
+
+---
+
+## SESSION LOG
+
+
+### 2026-10-10 | Morning Briefing | v6.2.22
+
+| DATE       | VERSION  | PRIORITY | TASK                                                                 | STATUS  |
+|------------|----------|----------|----------------------------------------------------------------------|---------|
+| 2026-10-10 | v6.2.22  | CRITICAL | Generate signed release APK & install on all 3 phones                | PENDING |
+| 2026-10-10 | v6.2.22  | CRITICAL | Wire RecoveryAiScreen to live Dr. I30LTZ / MAD AI backend endpoint| PENDING |
+| 2026-10-10 | v6.2.22  | HIGH     | Integration-test BridgeClient / BridgeWire on real Tailscale network | PENDING |
+| 2026-10-10 | v6.2.22  | HIGH     | Add i30LTZ red/yellow/void brand theme (replace carbon placeholders) | PENDING |
+| 2026-10-10 | v6.2.22  | HIGH     | Implement recovery-case push notifications (foreground service)       | PENDING |
+| 2026-10-10 | v6.2.22  | MEDIUM   | Upgrade Compose BOM 2024.09.00 → 2025.x for stability fixes          | PENDING |
+| 2026-10-10 | v6.2.22  | MEDIUM   | Add offline mode — cache last recovery case + AI responses           | PENDING |
+| 2026-10-10 | v6.2.22  | MEDIUM   | Make Dr. I30LTZ avatar + RecoveryAiScreen the default home tab       | PENDING |
+| 2026-10-10 | v6.2.22  | LOW      | Add quick-launch TTS voice toggle to main nav bar (CP-24 is buried)  | PENDING |
+| 2026-10-10 | v6.2.22  | LOW      | Add haptic feedback to case-critical alerts in DashboardScreen       | PENDING |
+
+
+---
+
+## 2026-10-11 | Nightly Append | v6.2.22
+
+### Status Update — Overnight
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-10 | v6.2.22 | CRITICAL | Generate signed release APK & install on all 3 phones | 🔴 STILL PENDING |
+| 2026-10-10 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to live Dr. I30LTZ / MAD AI backend endpoint | 🔴 STILL PENDING — Day 1+ |
+| 2026-10-10 | v6.2.22 | HIGH     | Integration-test BridgeClient on real Tailscale network | 🔴 PENDING |
+| 2026-10-10 | v6.2.22 | HIGH     | Add i30LTZ red/yellow/void brand theme | 🔴 PENDING |
+
+### Tomorrow's Top 3 (2026-10-12)
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-11 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to Dr. I30LTZ / MAD AI SSE endpoint | PENDING |
+| 2026-10-11 | v6.2.22 | HIGH     | Add i30LTZ brand theme (red/yellow/void) — replace carbon placeholders | PENDING |
+| 2026-10-11 | v6.2.22 | HIGH     | Generate signed release APK + install on test phones | PENDING |
+
+> *Nightly append by LUCILLE CORE AI | 2026-10-11 00:00 ET | v6.2.22*
+
+---
+
+## 2026-10-11 | Morning Briefing | v6.2.22
+
+### Dr. I30LTZ Companion | MAD IT AI | Daily App Briefing — 10:14 AM ET
+
+| DATE       | VERSION  | PRIORITY   | TASK                                                                           | STATUS  |
+|------------|----------|------------|--------------------------------------------------------------------------------|---------|
+| 2026-10-11 | v6.2.22  | CRITICAL   | Apply i30LTZ brand theme (red #cc1a1a / yellow #f0c020 / void #050508) — replace ALL Carbon placeholders in Color.kt + Theme.kt | PENDING |
+| 2026-10-11 | v6.2.22  | CRITICAL   | Wire RecoveryAiScreen to live MAD IT AI SSE endpoint (BridgeClient /api/chat) — validate streaming UI renders response lines | PENDING |
+| 2026-10-11 | v6.2.22  | HIGH       | Generate signed release APK + deploy to all 3 phones (no release APK exists in outputs/apk/release/) | PENDING |
+| 2026-10-11 | v6.2.22  | HIGH       | Promote DrI3oltzFullAvatarScreen as default home tab (currently buried) — set start destination in NavHost | PENDING |
+| 2026-10-11 | v6.2.22  | MEDIUM     | Add foreground push notification service for case-critical alerts (recovery job complete, drive health warning) | PENDING |
+
+> *Morning briefing by Dr. I30LTZ Companion | MAD IT AI | 2026-10-11 10:14 AM ET | v6.2.22*
+
+
+---
+
+## 2026-10-12 | Nightly Append | v6.2.22
+
+### Status Update -- Oct 11 Queue Review
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-11 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to Dr I30LTZ / MAD AI SSE endpoint | RED STILL PENDING |
+| 2026-10-11 | v6.2.22 | HIGH | Add i30LTZ brand theme (red/yellow/void) replace carbon | RED STILL PENDING |
+| 2026-10-11 | v6.2.22 | HIGH | Generate signed release APK + install on test phones | RED STILL PENDING |
+| 2026-10-11 | v6.2.22 | HIGH | Promote DrI3oltzFullAvatarScreen as default home tab | RED STILL PENDING |
+| 2026-10-11 | v6.2.22 | MEDIUM | Add foreground push notification service for case-critical alerts | PENDING |
+
+### Tomorrow Top 3 (2026-10-13)
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-12 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to MAD IT AI SSE endpoint BridgeClient /api/chat | PENDING |
+| 2026-10-12 | v6.2.22 | HIGH | Apply brand theme red #cc1a1a / yellow #f0c020 / void #050508 to Color.kt + Theme.kt | PENDING |
+| 2026-10-12 | v6.2.22 | HIGH | Generate signed release APK + deploy to all 3 phones | PENDING |
+
+> Nightly append by LUCILLE CORE AI | 2026-10-12 00:00 ET | v6.2.22
+
+---
+
+## 2026-10-13 | Nightly Append | v6.2.22
+
+### Status Update — Oct 12 Queue Review
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-12 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to MAD IT AI SSE endpoint BridgeClient /api/chat | 🔴 STILL PENDING — Day 3 |
+| 2026-10-12 | v6.2.22 | HIGH | Apply brand theme red #cc1a1a / yellow #f0c020 / void #050508 to Color.kt + Theme.kt | 🔴 STILL PENDING |
+| 2026-10-12 | v6.2.22 | HIGH | Generate signed release APK + deploy to all 3 phones | 🔴 STILL PENDING |
+
+### Today's Activity (2026-10-13)
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-13 | v0.3.0-alpha | ✅ WIN | eval.rs: Drive struct + Part struct + lsblk parsing + Ollama detection — MAD IT hardware layer foundation | DONE (uncommitted) |
+| 2026-10-13 | v0.3.0-alpha | ✅ WIN | main.rs: Major architectural refactor — future SSE/bridge-ready structure | DONE (uncommitted) |
+| 2026-10-13 | v0.3.0-alpha | ⚠️ FLAG | 37 dirty files in /mnt/recoverybuild — commit needed tonight | PENDING |
+
+### Tomorrow Top 3 (2026-10-14)
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-13 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to live MAD IT AI SSE endpoint (BridgeClient /api/chat) + validate streaming renders | PENDING |
+| 2026-10-13 | v6.2.22 | HIGH | Apply i30LTZ brand theme red #cc1a1a / yellow #f0c020 / void #050508 — replace all Carbon placeholders | PENDING |
+| 2026-10-13 | v6.2.22 | HIGH | Generate signed release APK + deploy to test phones — no release APK in outputs/apk/release/ yet | PENDING |
+
+> Nightly append by LUCILLE CORE AI | 2026-10-13 18:36 UTC (14:36 ET) | v6.2.22
+
+---
+
+## 2026-10-14 | Nightly Append | v6.2.22
+
+### Status Update — Oct 13 Queue Review
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-13 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to MAD I30LTZ AI SSE endpoint (BridgeClient /api/chat) | 🔴 STILL PENDING — Day 4 |
+| 2026-10-13 | v6.2.22 | HIGH | Apply i30LTZ brand theme red #cc1a1a / yellow #f0c020 / void #050508 | 🔴 STILL PENDING |
+| 2026-10-13 | v6.2.22 | HIGH | Generate signed release APK + deploy to test phones | 🔴 STILL PENDING |
+
+### Tomorrow Top 3 (2026-10-15)
+
+| Date | Version | Priority | Task | Status |
+|------|---------|----------|------|--------|
+| 2026-10-14 | v6.2.22 | CRITICAL | Wire RecoveryAiScreen to MAD I30LTZ AI SSE endpoint — engine has hardware detection now, connect the UI | PENDING |
+| 2026-10-14 | v6.2.22 | HIGH | Apply brand theme red #cc1a1a / yellow #f0c020 / void #050508 to Color.kt + Theme.kt | PENDING |
+| 2026-10-14 | v6.2.22 | HIGH | Generate signed release APK + deploy to all 3 phones | PENDING |
+
+> *Nightly append by LUCILLE CORE AI | 2026-10-14 00:00 ET | v6.2.22*

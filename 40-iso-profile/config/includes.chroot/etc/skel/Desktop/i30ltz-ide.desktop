@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=I30LTZ IDE
+GenericName=Code editor
+Comment=Professional IDE with Dr. I30LTZ MAD AI (local, offline)
+Exec=i30ltz-ide
+Icon=i30ltz-logo
+Terminal=false
+Categories=Development;IDE;
+Keywords=code;ide;editor;git;terminal;
+StartupNotify=true

@@ -1,0 +1,3 @@
+#!/bin/sh
+# I30LTZ IDE launcher (the bundle is installed to /opt/i30ltz/ide by 70-scripts/build.sh)
+exec /opt/i30ltz/ide/i30ltz_ide "$@"

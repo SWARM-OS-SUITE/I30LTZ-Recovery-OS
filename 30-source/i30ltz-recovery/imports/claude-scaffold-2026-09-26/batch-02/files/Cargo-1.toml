@@ -1,0 +1,82 @@
+# ============================================================
+# i30LTZ Recovery OS — Cargo Workspace Root
+# v0.1.0 | 2026-09-26 | Debian 12 (Bookworm)
+# ============================================================
+
+[workspace]
+resolver = "2"
+
+members = [
+    # ── Applications ──────────────────────────────────────────
+    "apps/shell",           # Native Slint boot shell / OS UI
+    "apps/mad-it",          # MAD IT AI core (llama.cpp bridge)
+    "apps/case-manager",    # Recovery case manager CLI
+    "apps/hardware-dash",   # Hardware diagnostics dashboard
+
+    # ── Libraries ─────────────────────────────────────────────
+    "libs/i30ltz-core",     # Shared types, config, logging
+    "libs/i30ltz-ui",       # Shared Slint design system / theme tokens
+
+    # ── Tools ─────────────────────────────────────────────────
+    "tools/drive-scan",     # Drive fingerprint + SMART + health
+    "tools/report-gen",     # PDF/Markdown report generator
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["I320K3-N-I30LTZ"]
+license = "MIT"
+repository = ""
+
+# ── Shared dependency versions (override in members as needed) ──
+[workspace.dependencies]
+# Core
+serde          = { version = "1", features = ["derive"] }
+serde_json     = "1"
+toml           = "0.8"
+anyhow         = "1"
+thiserror      = "1"
+log            = "0.4"
+env_logger     = "0.11"
+chrono         = { version = "0.4", features = ["serde"] }
+uuid           = { version = "1", features = ["v4", "serde"] }
+
+# Async
+tokio          = { version = "1", features = ["full"] }
+
+# UI (Slint)
+slint          = "1.7"
+
+# System / hardware
+sysinfo        = "0.31"
+nix            = { version = "0.29", features = ["fs", "ioctl"] }
+
+# TUI (case-manager CLI)
+ratatui        = "0.28"
+crossterm      = "0.28"
+clap           = { version = "4", features = ["derive"] }
+
+# Storage / DB
+rusqlite       = { version = "0.32", features = ["bundled"] }
+
+# Reporting
+printpdf       = "0.7"
+pulldown-cmark = "0.11"
+
+# Internal
+i30ltz-core    = { path = "libs/i30ltz-core" }
+i30ltz-ui      = { path = "libs/i30ltz-ui" }
+
+# ── Build profile: release = stripped, fast, small ──────────
+[profile.release]
+opt-level     = 3
+lto           = true
+codegen-units = 1
+strip         = true
+panic         = "abort"
+
+# ── Build profile: dev = fast recompile ─────────────────────
+[profile.dev]
+opt-level = 0
+debug     = true

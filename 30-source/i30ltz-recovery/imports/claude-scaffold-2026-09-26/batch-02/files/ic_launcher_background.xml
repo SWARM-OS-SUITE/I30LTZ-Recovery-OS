@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Deep void background -->
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="54"
+                android:startY="0"
+                android:endX="54"
+                android:endY="108"
+                android:type="linear">
+                <item android:color="#FF050814" android:offset="0.0"/>
+                <item android:color="#FF0C0524" android:offset="0.5"/>
+                <item android:color="#FF050814" android:offset="1.0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Subtle diagonal circuit traces — cyan -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,18 L18,0 M0,36 L36,0 M0,54 L54,0 M0,72 L72,0 M0,90 L90,0 M18,108 L108,18 M36,108 L108,36 M54,108 L108,54 M72,108 L108,72 M90,108 L108,90"
+        android:strokeWidth="0.6"
+        android:strokeColor="#1200E5FF"/>
+
+    <!-- Subtle diagonal circuit traces — magenta -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M108,18 L90,0 M108,36 L72,0 M108,54 L54,0 M108,72 L36,0 M108,90 L18,0 M90,108 L0,18 M72,108 L0,36 M54,108 L0,54 M36,108 L0,72 M18,108 L0,90"
+        android:strokeWidth="0.6"
+        android:strokeColor="#12D500FF"/>
+</vector>

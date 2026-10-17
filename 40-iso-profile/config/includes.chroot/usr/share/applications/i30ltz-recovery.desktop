@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Dr. I30LTZ Recovery
+GenericName=System Recovery GUI
+Comment=Autonomous system recovery, disk triage, and data salvage kiosk
+Exec=i30ltz-gui
+Icon=dr-boltz
+Terminal=false
+Categories=System;Utility;
+StartupNotify=true

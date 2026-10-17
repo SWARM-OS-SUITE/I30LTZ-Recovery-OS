@@ -1,0 +1,18 @@
+# ==== CANONICAL SHARED MOUNTS: paste into /etc/fstab on EVERY OS (replaces any existing /mnt/* lines) ====
+# Generated from mounts.manifest 2026-10-06; /mnt/recoveryos UUID updated 2026-10-10 (T7 re-partition). Mount by UUID. nofail so a missing drive never blocks boot.
+# After editing:  sudo systemctl daemon-reload && sudo mount -a && bash /mnt/recoverybuild/70-scripts/check-mounts.sh
+# /mnt/storage is inside LUKS (container a24202ce-4d76-4eb7-8923-8e8ddbacdaa7): unlock it first (crypttab), then this line mounts the inner fs
+UUID=2de6ca36-421c-4c3e-8bc4-fbe3e6f66238	/mnt/storage	ext4	defaults,nofail,x-systemd.automount	0	2
+UUID=c400a0ee-6710-4fe7-ad7a-c80dc3f402ca	/mnt/archive	ext4	defaults,nofail,x-systemd.automount	0	2
+UUID=62f0e009-43c2-4760-8d6c-d7c445f5f3df	/mnt/Lucy	ext4	defaults,nofail,x-systemd.automount	0	2
+UUID=5c84ef0e-d7b8-4b36-b1c4-58817b483dda	/mnt/swarmbuild	ext4	defaults,nofail,x-systemd.automount	0	2
+UUID=a409250b-3973-4448-aeda-94a911538eb4	/mnt/recoverybuild	btrfs	defaults,nofail,x-systemd.automount	0	2
+UUID=acde635e-ac49-4bec-ac69-a6b12a2478e4	/mnt/downloads	ext4	defaults,nofail,x-systemd.automount	0	2
+UUID=5ABB-83DF	/mnt/ventoy	exfat	defaults,nofail,uid=1000,gid=1000,x-systemd.automount	0	2
+UUID=6a6b5a8c-aa9e-4286-a5f1-c27174b41cbc	/mnt/swarm	btrfs	defaults,nofail,x-systemd.automount	0	2
+UUID=fba1b27f-407b-4385-9dfa-851833f249db	/mnt/brains	ext4	defaults,nofail,x-systemd.automount	0	2
+# App build partitions (2026-10-09): Lucille Assistant / Boltz Recovery phone app / Recovery OS root. boltzbuild was NTFS by mistake; the user reformatted it ext4 (new UUID).
+UUID=93037d5a-5b82-484c-ac20-28211c09e1c0	/mnt/lucillebuild	ext4	defaults,nofail,x-systemd.automount	0	2
+UUID=6f7c7656-2984-4fb0-81c8-bfc11ca81461	/mnt/boltzbuild	ext4	defaults,nofail,x-systemd.automount	0	2
+UUID=96969ed2-15b1-48e6-815e-20fa87d1fb5b	/mnt/recoveryos	btrfs	defaults,nofail,x-systemd.automount	0	2
+# ==== end canonical shared mounts ====

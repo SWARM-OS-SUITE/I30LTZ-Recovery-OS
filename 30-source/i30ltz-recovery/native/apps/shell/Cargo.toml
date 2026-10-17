@@ -1,0 +1,13 @@
+[package]
+name = "i30ltz-shell"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "i30ltz-shell"
+path = "src/main.rs"
+
+[dependencies]
+i30ltz-core.workspace = true
+i30ltz-ui.workspace = true

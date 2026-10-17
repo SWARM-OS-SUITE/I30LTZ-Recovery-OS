@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install I30LTZ Recovery OS
+Comment=Install to disk (Calamares)
+Exec=sudo -E calamares
+Icon=system-software-install
+Terminal=false
+Categories=System;

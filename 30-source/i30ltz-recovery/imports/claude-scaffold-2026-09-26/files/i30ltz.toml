@@ -1,0 +1,18 @@
+# i30LTZ Recovery OS — Default Config
+# v0.1.0 | 2026-09-26
+
+data_dir   = "/var/lib/i30ltz"
+cases_dir  = "/var/lib/i30ltz/cases"
+models_dir = "/opt/i30ltz/models"
+log_level  = "info"
+
+[ai]
+model_file   = "/opt/i30ltz/models/mad-it.gguf"
+context_size = 4096
+threads      = 4
+gpu_layers   = 0       # 0 = CPU-only; set > 0 if GPU present
+
+[theme]
+accent_red    = "#cc1a1a"
+accent_yellow = "#f0c020"
+bg_void       = "#050508"

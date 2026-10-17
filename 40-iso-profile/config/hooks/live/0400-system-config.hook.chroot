@@ -1,0 +1,130 @@
+#!/bin/bash
+# I30LTZ Recovery OS — Hook: System Hardening & Config
+# Version: 0.2.0-alpha | Date: 2026-10-05
+# Stage: live (runs inside chroot during build)
+# -------------------------------------------------------
+
+set -e
+
+echo "[I30LTZ HOOK] 0400-system-config: Hardening & configuration..."
+
+# ── Hostname ─────────────────────────────────────────────
+echo "i30ltz-recovery" > /etc/hostname
+cat > /etc/hosts << 'EOF'
+127.0.0.1   localhost
+127.0.1.1   i30ltz-recovery
+::1         localhost ip6-localhost ip6-loopback
+fe00::0     ip6-localnet
+ff00::0     ip6-mcastprefix
+ff02::1     ip6-allnodes
+ff02::2     ip6-allrouters
+EOF
+
+# ── Disable sshd (Tailscale-only remote) ─────────────────
+systemctl disable ssh 2>/dev/null || true
+systemctl disable openssh-server 2>/dev/null || true
+
+# ── Kernel parameters ────────────────────────────────────
+cat > /etc/sysctl.d/99-i30ltz-recovery.conf << 'EOF'
+# I30LTZ Recovery OS — sysctl | v0.2.0 | 2026-10-05
+
+# Security
+kernel.dmesg_restrict = 0
+kernel.perf_event_paranoid = 3
+net.ipv4.ip_forward = 0
+net.ipv6.conf.all.forwarding = 0
+
+# Disk / VM performance
+vm.swappiness = 10
+vm.dirty_ratio = 15
+vm.dirty_background_ratio = 5
+vm.vfs_cache_pressure = 50
+
+# Network performance
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.ipv4.tcp_rmem = 4096 65536 16777216
+net.ipv4.tcp_wmem = 4096 65536 16777216
+EOF
+
+# ── LightDM autologin → recovery user ────────────────────
+mkdir -p /etc/lightdm
+cat > /etc/lightdm/lightdm.conf << 'EOF'
+# I30LTZ Recovery OS — LightDM config | v0.2.0 | 2026-10-05
+[Seat:*]
+autologin-guest=false
+autologin-user=liveuser
+autologin-user-timeout=0
+user-session=openbox
+greeter-session=lightdm-gtk-greeter
+EOF
+
+# ── Openbox autostart for i30ltz ─────────────────────────
+mkdir -p /etc/skel/.config/openbox
+cat > /etc/skel/.config/openbox/autostart << 'EOF'
+# I30LTZ Recovery OS — Openbox autostart | v0.2.0 | 2026-10-05
+
+# Wait for mad-dr-boltz to be ready
+sleep 3
+
+# Launch i30ltz-recovery GUI
+/usr/local/bin/i30ltz-gui &
+EOF
+
+# ── MOTD ─────────────────────────────────────────────────
+cat > /etc/motd << 'EOF'
+
+  ██╗██████╗  ██████╗ ██╗  ████████╗███████╗
+  ██║╚════██╗██╔═████╗██║  ╚══██╔══╝╚════██║
+  ██║ █████╔╝██║██╔██║██║     ██║       ██╔╝
+  ██║ ╚═══██╗████╔╝██║██║     ██║      ██╔╝
+  ██║██████╔╝╚██████╔╝███████╗██║      ██║
+  ╚═╝╚═════╝  ╚═════╝ ╚══════╝╚═╝      ╚═╝
+
+  I30LTZ Recovery OS v0.2.0-alpha | 2026-10-05
+  AI: Mad Dr. Boltz (qwen2.5:7b) | Debian 13 trixie
+  ─────────────────────────────────────────────
+  Status:  systemctl status mad-dr-boltz ollama
+  Logs:    journalctl -u mad-dr-boltz -f
+  Model:   ollama pull qwen2.5:7b
+  GUI:     i30ltz-recovery
+
+EOF
+
+# ── I30LTZ CLI helper ─────────────────────────────────────
+cat > /usr/local/bin/i30ltz << 'SCRIPT'
+#!/bin/bash
+# I30LTZ Recovery OS — CLI helper | v0.2.0 | 2026-10-05
+[ -f /etc/i30ltz/boltz.env ] && . /etc/i30ltz/boltz.env
+AUTH="${BOLTZ_AUTH_TOKEN:-}"
+URL="http://127.0.0.1:5000"
+case "$1" in
+  status)
+    systemctl status mad-dr-boltz ollama --no-pager ;;
+  health)
+    curl -s "$URL/health" | python3 -m json.tool ;;
+  chat)
+    shift
+    MSG="${*:-system status}"
+    curl -s -X POST "$URL/boltz" \
+      -H "X-Swarm-Auth: $AUTH" \
+      -H "Content-Type: application/json" \
+      -d "{\"message\":\"$MSG\"}" \
+      | grep "^data:" | sed 's/^data: //' | sed 's/\[DONE\]//' ;;
+  model)
+    ollama list ;;
+  pull)
+    ollama pull "${2:-qwen2.5:7b}" ;;
+  logs)
+    journalctl -u mad-dr-boltz -f ;;
+  pair)
+    sudo /usr/local/sbin/i30ltz-net pair ;;
+  net)
+    sudo /usr/local/sbin/i30ltz-net status ;;
+  *)
+    echo "Usage: i30ltz {status|health|chat <msg>|model|pull <model>|logs|pair|net}" ;;
+esac
+SCRIPT
+chmod +x /usr/local/bin/i30ltz
+
+echo "[I30LTZ HOOK] 0400-system-config: DONE"

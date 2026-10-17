@@ -1,0 +1,21 @@
+[package]
+name = "i30ltz-recovery"
+version = "0.1.0"
+edition = "2021"
+description = "DR. I30LTZ Recovery — Evaluation System"
+
+[[bin]]
+name = "i30ltz-recovery"
+path = "src/main.rs"
+
+[dependencies]
+raylib = "5.0"
+ureq = { version = "2", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

@@ -1,0 +1,59 @@
+#!/bin/bash
+# i30ltz-net - network policy enforcer | v0.3.1-alpha | 2026-10-05
+# Usage: i30ltz-net apply|status|pair|token
+set -e
+NETENV=/etc/i30ltz/network.env
+SECRET=/etc/i30ltz/boltz.env
+[ -f "$NETENV" ] && . "$NETENV"
+EXPOSE="${BOLTZ_EXPOSE:-private}"
+PORT="${BOLTZ_PORT:-5000}"
+
+ensure_token() {
+  if [ ! -s "$SECRET" ] || grep -q 'swarm-token-2026' "$SECRET"; then
+    t=$(head -c 24 /dev/urandom | od -An -tx1 | tr -d ' \n')
+    umask 022
+    printf 'BOLTZ_AUTH_TOKEN=%s\nSWARM_AUTH_TOKEN=%s\n' "$t" "$t" > "$SECRET"
+    echo "[i30ltz-net] generated new API token"
+  fi
+}
+
+apply_fw() {
+  command -v nft >/dev/null || { echo "[i30ltz-net] nft missing"; return 0; }
+  nft delete table inet i30ltz 2>/dev/null || true
+  {
+    echo 'table inet i30ltz {'
+    echo '  chain input {'
+    echo '    type filter hook input priority -10; policy accept;'
+    echo '    iifname "lo" accept'
+    echo '    tcp dport 11434 drop'
+    if [ "$EXPOSE" = "private" ]; then
+      echo "    ip saddr { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10, 169.254.0.0/16 } tcp dport $PORT accept"
+      echo "    ip6 saddr { fe80::/10, fd00::/8 } tcp dport $PORT accept"
+    fi
+    echo "    tcp dport $PORT drop"
+    echo '  }'
+    echo '}'
+  } | nft -f -
+}
+
+case "${1:-apply}" in
+  apply)  ensure_token; apply_fw ;;
+  token)  ensure_token; . "$SECRET"; echo "$BOLTZ_AUTH_TOKEN" ;;
+  status)
+    echo "expose : $EXPOSE (port $PORT)"
+    echo "ollama : 127.0.0.1:11434 (fixed)"
+    ss -ltn 2>/dev/null | grep -E ":($PORT|11434)\b" || echo "(nothing listening yet)"
+    nft list table inet i30ltz 2>/dev/null || echo "(firewall table not loaded)" ;;
+  pair)
+    ensure_token; . "$SECRET"
+    [ "$EXPOSE" = "private" ] || { echo "BOLTZ_EXPOSE=local - companions cannot connect. Edit $NETENV"; exit 1; }
+    for ip in $(hostname -I); do
+      JSON="{\"v\":1,\"url\":\"http://$ip:$PORT\",\"token\":\"$BOLTZ_AUTH_TOKEN\"}"
+      echo "URL   : http://$ip:$PORT"
+      echo "mDNS  : http://$(hostname).local:$PORT"
+      echo "TOKEN : $BOLTZ_AUTH_TOKEN"
+      command -v qrencode >/dev/null && qrencode -t ansiutf8 "$JSON"
+      echo "$JSON"; echo
+    done ;;
+  *) echo "Usage: i30ltz-net apply|status|pair|token"; exit 1 ;;
+esac

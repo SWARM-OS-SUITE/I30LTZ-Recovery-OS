@@ -1,0 +1,56 @@
+#!/bin/bash
+# I30LTZ Recovery OS - Hook: Mad Dr. Boltz brain
+# Version: 0.3.1-alpha | Date: 2026-10-05
+# boltz_server.py + requirements.txt are copied into /opt/i30ltz/brain by
+# build.sh (single source: 30-source/mad-dr-boltz/brain/). NOT duplicated here.
+# Bind/exposure is decided ONLY by /etc/i30ltz/network.env.
+set -e
+echo "[I30LTZ HOOK] 0200-setup-boltz..."
+BRAIN=/opt/i30ltz/brain
+[ -f "$BRAIN/boltz_server.py" ] || { echo "ERROR: $BRAIN/boltz_server.py missing - build.sh sync step did not run"; exit 1; }
+
+python3 -m venv "$BRAIN/venv"
+"$BRAIN/venv/bin/pip" install -q --upgrade pip
+"$BRAIN/venv/bin/pip" install -q -r "$BRAIN/requirements.txt"
+
+id recovery &>/dev/null || useradd -r -s /bin/false -d /opt/i30ltz recovery
+mkdir -p /opt/i30ltz/runtime /etc/i30ltz
+chown -R recovery:recovery "$BRAIN" /opt/i30ltz/runtime
+
+cat > /etc/systemd/system/mad-dr-boltz.service << 'SVC'
+# Mad Dr. Boltz - systemd | v0.3.1 | 2026-10-05
+# NO bind address here. See /etc/i30ltz/network.env
+[Unit]
+Description=Mad Dr. Boltz SSE Backend - I30LTZ Recovery OS AI
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+User=recovery
+Group=recovery
+WorkingDirectory=/opt/i30ltz/brain
+Environment="OLLAMA_URL=http://127.0.0.1:11434"
+Environment="AGENT_MODEL=qwen2.5:7b"
+Environment="NTFY_TOPIC=boltz-approval"
+EnvironmentFile=-/etc/i30ltz/network.env
+ExecStartPre=+/usr/local/sbin/i30ltz-net apply
+EnvironmentFile=-/etc/i30ltz/boltz.env
+ExecStart=/opt/i30ltz/brain/venv/bin/python3 /opt/i30ltz/brain/boltz_server.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mad-dr-boltz
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/opt/i30ltz/brain
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+SVC
+
+systemctl enable mad-dr-boltz avahi-daemon 2>/dev/null || true
+echo "[I30LTZ HOOK] 0200-setup-boltz: DONE"

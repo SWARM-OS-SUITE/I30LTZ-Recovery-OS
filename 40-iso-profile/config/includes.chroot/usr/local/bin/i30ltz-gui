@@ -1,0 +1,6 @@
+#!/bin/bash
+# i30ltz-gui - launches the Raylib GUI with the live API token | v0.3.2 | 2026-10-14
+[ -f /etc/i30ltz/boltz.env ] && . /etc/i30ltz/boltz.env
+[ -n "$BOLTZ_AUTH_TOKEN" ] && export SWARM_AUTH_TOKEN="$BOLTZ_AUTH_TOKEN"
+export LUCY_URL="${LUCY_URL:-http://127.0.0.1:7300}"
+exec /usr/local/bin/i30ltz-recovery "$@"
