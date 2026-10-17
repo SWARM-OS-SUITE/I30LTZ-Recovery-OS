@@ -223,3 +223,5 @@
 2026-10-16T21:38:05-04:00	dev-antigravity	SW: Boot & Install	CLAIM	SW-01 keep ISO/VM current
 2026-10-16T21:44:42-04:00	helpers-claude	SW: airootfs helper scripts	DONE	
 2026-10-17T11:57:44-04:00	tracker-claude	INF: GitHub cleanup (fresh repos per build partition)	CLAIM	User 2026-10-17: GitHub must hold only clean repos, one per build partition; replace each repo's history with one clean commit (full history kept locally in refs/archive + bundles under ~/.local/share/git-history-backups). Order: Recovery OS (weed photos), lucille-assistant, Companion; SWARM pending the user.
+2026-10-17T12:44:12-04:00	dev-claude	/mnt/boltzbuild	CLAIM	CP: Miss Koreena persona (Linux/GRUB tutor) + new Boltz/Koreena icons
+2026-10-17T12:46:16-04:00	tracker-claude	INF: GitHub cleanup (fresh repos per build partition)	DONE	Done: 4 repos renamed A-D ...-Trifecta, one clean commit each, only main; old histories bundled in ~/.local/share/git-history-backups; /mnt/Lucy local-only (push URL disabled, auto_sync push opt-in). C paths switched to /mnt/lucillebuild (uncommitted in C repos); bind removal waits for Lucille rebuild.
